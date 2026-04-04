@@ -14,7 +14,7 @@
 ## GitHub Project
 
 Tablero del proyecto: [dp261-g4 Project](https://github.com/orgs/pucp-datanalytics/projects/4)
-
+Tablero creado por nosotros: https://github.com/users/perlagzav/projects/2
 ## Labels
 
 Los labels del repositorio siguen una convencion de prefijos para organizar el trabajo:
