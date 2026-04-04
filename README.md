@@ -5,9 +5,11 @@
 | Nombre | Rol |
 |--------|-----|
 | Pedro Shiguihara | Product Owner (P.O) |
-| _Nombre Apellido_ | _Rol del miembro_ |
-| _Nombre Apellido_ | _Rol del miembro_ |
-| _Nombre Apellido_ | _Rol del miembro_ |
+| _Perla Gavilano_ | _Project Manager_ |
+| _Perla Gavilano_ | _Business Analyst_ |
+| _Julio Misari_ | _Data Engineer_ |
+| _Nikol Solaligue_ | _Data Analyst_ |
+| _Juan Ramos_ | _Prototype Developer_ |
 
 ## GitHub Project
 
