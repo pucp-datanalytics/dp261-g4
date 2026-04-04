@@ -1,0 +1,15 @@
+# Datos
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Python/Jupyter
+__pycache__/
+.ipynb_checkpoints/
+*.py[cod]
+*\.class
+
+# Entornos
+.venv/
+env/
