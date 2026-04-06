@@ -1,0 +1,14 @@
+name: proyecto
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - matplotlib
+  - numpy
+  - ipywidgets
+  - scikit-learn
+  - pandas
+  - seaborn
+  - jupyterlab
+  - dvc
+prefix: C:\Users\Lenovo\miniforge3\envs\proyecto

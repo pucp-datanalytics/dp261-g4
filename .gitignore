@@ -1,15 +1,29 @@
-# Datos
-data/raw/*
+# ======================
+# DATOS
+# ======================
+
+# Ignorar datos procesados
 data/processed/*
+
+# Ignorar datasets en raw (pero no los .dvc)
+data/raw/*.csv
+
+# Permitir archivos de control
+!data/raw/*.dvc
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 
-# Python/Jupyter
+# ======================
+# PYTHON / JUPYTER
+# ======================
+
 __pycache__/
 .ipynb_checkpoints/
 *.py[cod]
-*\.class
 
-# Entornos
+# ======================
+# ENTORNOS
+# ======================
+
 .venv/
 env/
