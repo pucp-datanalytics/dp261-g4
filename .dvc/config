@@ -1,0 +1,6 @@
+[core]
+    remote = storage
+['remote "gdrive"']
+    url = gdrive://1Dv4x1vUsdMitO9z86V0VshPB_uvD_h8X
+['remote "storage"']
+    url = C:\Users\Lenovo\Mi unidad\dvc-storage-new
