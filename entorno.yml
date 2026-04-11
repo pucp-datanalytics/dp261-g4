@@ -1,0 +1,4 @@
+name: proyecto
+channels:
+  - conda-forge
+prefix: C:\Users\Admin\miniforge3\envs\proyecto
