@@ -1,5 +1,5 @@
 # dp261-g4
-
+- Sprint 1: Data Preparation
 ## Miembros del Proyecto
 
 | Nombre | Rol |
@@ -10,6 +10,29 @@
 | _Julio Misari_ | _Data Engineer_ |
 | _Nikol Solaligue_ | _Data Analyst_ |
 | _Juan Ramos_ | _Prototype Developer_ |
+
+## Distribución de Issues por Sprint 2
+
+| Issue | Historia de Usuario | Responsable | Estado |
+|-------|---------------------|-------------|--------|
+| `feature/PB-07-data-cleaning` | PB-07: Limpiar y transformar variables | Nikol Solaligue | 🔄 En progreso |
+| `feature/PB-08-feature-engineering` | PB-08: Realizar feature engineering | Juan Ramos | ⏳ Pendiente |
+| `feature/PB-09-class-balancing` | PB-09: Balancear clases si es necesario | Perla Gavilano | ⏳ Pendiente |
+| `feature/PB-10-pipeline-integration` | Pipeline Builder (integración completa) | Julio Misari | ⏳ Pendiente |
+
+---
+
+## Tabla Resumen de Roles por Sprint
+
+| Integrante | Sprint 1 | Sprint 2 |
+|------------|----------|----------|
+| Pedro Shiguihara | Product Owner | Product Owner |
+| Nikol Solaligue | Data Analyst | Project Manager + Data Cleaner |
+| Juan Ramos | Prototype Developer | Feature Engineer |
+| Perla Gavilano | Project Manager + Business Analyst | Class Balancer |
+| Julio Misari | Data Engineer | Pipeline Builder |
+
+
 
 ## GitHub Project
 
