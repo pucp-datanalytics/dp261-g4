@@ -13,8 +13,8 @@
 
 ## Distribución de Issues por Sprint 2
 
-| Issue | Historia de Usuario | Responsable | Estado |
-|-------|---------------------|-------------|--------|
+| Issue | Historia de Usuario | Responsable | 
+|-------|---------------------|-------------|
 | `feature/PB-07-data-cleaning` | PB-07: Limpiar y transformar variables | Nikol Solaligue | 
 | `feature/PB-08-feature-engineering` | PB-08: Realizar feature engineering | Juan Ramos | 
 | `feature/PB-09-class-balancing` | PB-09: Balancear clases si es necesario | Perla Gavilano | 
