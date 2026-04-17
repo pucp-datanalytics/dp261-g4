@@ -1,0 +1,54 @@
+feature,como_se_calcula,por_que_podria_ser_util
+Admin_Duration_per_Page,Administrative_Duration / (Administrative + 1),Mide el tiempo medio por página administrativa.
+Info_Duration_per_Page,Informational_Duration / (Informational + 1),Resume cuánto tiempo dedica a páginas informativas.
+Product_Duration_per_Page,ProductRelated_Duration / (ProductRelated + 1),Captura profundidad de exploración de páginas de producto.
+Total_PageTypes,Administrative + Informational + ProductRelated,Mide el volumen total de páginas visitadas.
+Total_Duration,Administrative_Duration + Informational_Duration + ProductRelated_Duration,Resume el tiempo total de navegación del usuario.
+Avg_Duration_per_Page,Total_Duration / (Total_PageTypes + 1),Aproxima el tiempo promedio por página.
+Product_minus_Admin,ProductRelated - Administrative,Mide si el usuario se enfoca más en productos que en contenido administrativo.
+Exit_minus_Bounce,ExitRates - BounceRates,Captura diferencia entre abandono y rebote.
+PageValues_x_ProductRelated,PageValues * ProductRelated,Combina valor comercial con cantidad de páginas de producto.
+Exit_x_Bounce,ExitRates * BounceRates,Refuerza señales de abandono o mala retención.
+Admin_x_Info,Administrative * Informational,Captura interacción entre exploración administrativa e informativa.
+Duration_x_PageValues,Total_Duration * PageValues,Combina intensidad de navegación con valor comercial.
+IsReturningVisitor,"1 si VisitorType == 'Returning_Visitor', 0 en otro caso",Distingue usuarios recurrentes de nuevos.
+IsSpecialDay,"1 si SpecialDay > 0, 0 en otro caso",Captura cercanía a fechas especiales.
+IsWeekend,Conversión de Weekend a indicador binario,Separa sesiones de fin de semana de días laborables.
+Month_num,Mapeo de Month a 1..12,Representa el mes de forma ordenada.
+Month_sin,sin(2*pi*Month_num/12),Captura estacionalidad cíclica.
+Month_cos,cos(2*pi*Month_num/12),Complementa la estacionalidad cíclica.
+ProductRelated_bin,Binning de ProductRelated en low/medium/high/very_high,Agrupa intensidad de exploración de productos.
+PageValues_bin,Binning de PageValues en zero/low/medium/high,Resume rangos de valor comercial.
+Total_Duration_bin,Cuartiles de Total_Duration,Agrupa sesiones por intensidad de tiempo.
+Administrative_yeojohnson,Yeo-Johnson(Administrative),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Administrative_Duration_yeojohnson,Yeo-Johnson(Administrative_Duration),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Informational_yeojohnson,Yeo-Johnson(Informational),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Informational_Duration_yeojohnson,Yeo-Johnson(Informational_Duration),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+ProductRelated_yeojohnson,Yeo-Johnson(ProductRelated),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+ProductRelated_Duration_yeojohnson,Yeo-Johnson(ProductRelated_Duration),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+BounceRates_yeojohnson,Yeo-Johnson(BounceRates),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+ExitRates_yeojohnson,Yeo-Johnson(ExitRates),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+PageValues_yeojohnson,Yeo-Johnson(PageValues),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+SpecialDay_yeojohnson,Yeo-Johnson(SpecialDay),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Month_yeojohnson,Yeo-Johnson(Month),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+OperatingSystems_yeojohnson,Yeo-Johnson(OperatingSystems),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Browser_yeojohnson,Yeo-Johnson(Browser),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Region_yeojohnson,Yeo-Johnson(Region),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+TrafficType_yeojohnson,Yeo-Johnson(TrafficType),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+VisitorType_yeojohnson,Yeo-Johnson(VisitorType),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Weekend_yeojohnson,Yeo-Johnson(Weekend),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Admin_Duration_per_Page_yeojohnson,Yeo-Johnson(Admin_Duration_per_Page),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Info_Duration_per_Page_yeojohnson,Yeo-Johnson(Info_Duration_per_Page),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Product_Duration_per_Page_yeojohnson,Yeo-Johnson(Product_Duration_per_Page),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Total_PageTypes_yeojohnson,Yeo-Johnson(Total_PageTypes),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Total_Duration_yeojohnson,Yeo-Johnson(Total_Duration),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Avg_Duration_per_Page_yeojohnson,Yeo-Johnson(Avg_Duration_per_Page),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Product_minus_Admin_yeojohnson,Yeo-Johnson(Product_minus_Admin),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Exit_minus_Bounce_yeojohnson,Yeo-Johnson(Exit_minus_Bounce),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+PageValues_x_ProductRelated_yeojohnson,Yeo-Johnson(PageValues_x_ProductRelated),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Exit_x_Bounce_yeojohnson,Yeo-Johnson(Exit_x_Bounce),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Admin_x_Info_yeojohnson,Yeo-Johnson(Admin_x_Info),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+Duration_x_PageValues_yeojohnson,Yeo-Johnson(Duration_x_PageValues),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+IsReturningVisitor_yeojohnson,Yeo-Johnson(IsReturningVisitor),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+IsSpecialDay_yeojohnson,Yeo-Johnson(IsSpecialDay),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
+IsWeekend_yeojohnson,Yeo-Johnson(IsWeekend),Reduce asimetría permitiendo ceros y valores no estrictamente positivos.
