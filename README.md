@@ -1,5 +1,5 @@
 # dp261-g4
-- Sprint 1: Data Preparation
+## Distribución de Issues por Sprint 1
 ## Miembros del Proyecto
 
 | Nombre | Rol |
@@ -15,10 +15,10 @@
 
 | Issue | Historia de Usuario | Responsable | Estado |
 |-------|---------------------|-------------|--------|
-| `feature/PB-07-data-cleaning` | PB-07: Limpiar y transformar variables | Nikol Solaligue | 🔄 En progreso |
-| `feature/PB-08-feature-engineering` | PB-08: Realizar feature engineering | Juan Ramos | ⏳ Pendiente |
-| `feature/PB-09-class-balancing` | PB-09: Balancear clases si es necesario | Perla Gavilano | ⏳ Pendiente |
-| `feature/PB-10-pipeline-integration` | Pipeline Builder (integración completa) | Julio Misari | ⏳ Pendiente |
+| `feature/PB-07-data-cleaning` | PB-07: Limpiar y transformar variables | Nikol Solaligue | 
+| `feature/PB-08-feature-engineering` | PB-08: Realizar feature engineering | Juan Ramos | 
+| `feature/PB-09-class-balancing` | PB-09: Balancear clases si es necesario | Perla Gavilano | 
+| `feature/PB-10-pipeline-integration` | Pipeline Builder (integración completa) | Julio Misari | 
 
 ---
 
