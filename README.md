@@ -35,7 +35,7 @@
 
 | Integrante | Sprint 1 | Sprint 2 | Sprint 3 |
 |------------|----------|----------|----------|
-| Pedro Shiguihara | Product Owner | Product Owner |  |
+| Pedro Shiguihara | Product Owner | Product Owner | Product Owner |
 | Nikol Solaligue | Data Analyst | Project Manager + Data Cleaner | Metrics Evaluator |
 | Juan Ramos | Prototype Developer | Feature Engineer | Model Comparator |
 | Perla Gavilano | Project Manager + Business Analyst | Class Balancer | Baseline Trainer |
