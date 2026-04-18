@@ -2,16 +2,15 @@
 # DATOS
 # ======================
 
-# Ignorar datos procesados
+# Ignorar archivos generados en processed, pero permitir los .dvc
 data/processed/*
+!data/processed/*.dvc
+!data/processed/.gitkeep
 
 # Ignorar datasets en raw (pero no los .dvc)
 data/raw/*.csv
-
-# Permitir archivos de control
 !data/raw/*.dvc
 !data/raw/.gitkeep
-!data/processed/.gitkeep
 
 # ======================
 # PYTHON / JUPYTER
