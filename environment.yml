@@ -1,7 +1,8 @@
 name: proyecto
 channels:
-- conda-forge
+  - conda-forge
 dependencies:
+
 - _openmp_mutex=4.5=20_gnu
 - aiohappyeyeballs=2.6.1=pyhd8ed1ab_0
 - aiohttp=3.13.5=py311ha56572f_0
@@ -339,3 +340,15 @@ dependencies:
   - scipy==1.17.1
   - uritemplate==4.2.0
   - dvc[gdrive]
+  - python=3.11
+  - matplotlib
+  - numpy
+  - ipywidgets
+  - scikit-learn
+  - pandas
+  - seaborn
+  - jupyterlab
+  - dvc
+  - imbalanced-learn
+prefix: C:\Users\Lenovo\miniforge3\envs\proyecto
+
