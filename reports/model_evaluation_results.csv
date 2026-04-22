@@ -1,0 +1,6 @@
+Modelo,Accuracy,F1_Score
+Random Forest,0.903,0.6536
+SVM,0.8955,0.6034
+KNN,0.8885,0.567
+Decision Tree,0.854,0.5394
+Logistic Regression,0.885,0.5287
