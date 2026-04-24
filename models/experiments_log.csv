@@ -1,0 +1,6 @@
+model,params,accuracy_cv_mean,accuracy_cv_std,f1_cv_mean,f1_cv_std,precision_cv_mean,precision_cv_std,recall_cv_mean,recall_cv_std,roc_auc_cv_mean,roc_auc_cv_std,selected,notes,date
+Logistic Regression,default,0.893,0.0081,0.5108,0.0379,0.7492,0.0572,0.3877,0.0297,0.8937,0.0141,False,Recall muy bajo; deja pasar muchos positivos.,2026-04-24 17:55:05
+Decision Tree,default,0.8693,0.008,0.5487,0.0203,0.547,0.0295,0.5507,0.0121,0.7368,0.0094,True,Buen recall e interpretabilidad.,2026-04-24 17:55:05
+Random Forest,default,0.9061,0.0109,0.6294,0.0436,0.7299,0.0504,0.5533,0.0386,0.9179,0.0138,True,Mejor balance general; mejor F1 y ROC-AUC.,2026-04-24 17:55:05
+SVM,default,0.9024,0.0095,0.5937,0.0363,0.7437,0.0574,0.4943,0.0257,0.8629,0.0207,True,Buen rendimiento general y alta precision.,2026-04-24 17:55:05
+KNN,default,0.8938,0.0104,0.541,0.0433,0.7184,0.0635,0.4345,0.036,0.8046,0.0152,False,Rendimiento medio-bajo; no destaca frente a los mejores.,2026-04-24 17:55:05
