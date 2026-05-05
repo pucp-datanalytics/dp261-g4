@@ -29,17 +29,18 @@
 | `feat/PB-12-model-comparison` | PB-12: Comparar modelos y seleccionar candidatos | Juan Ramos |
 | `feat/EXP-experiment-tracking` | Registro de experimentos, versionado de modelos y soporte de coordinación del sprint | Julio Misari |
 
+
 ---
 
 ## Tabla Resumen de Roles por Sprint
 
 | Integrante | Sprint 1 | Sprint 2 | Sprint 3 |
 |------------|----------|----------|----------|
-| Pedro Shiguihara | Product Owner | Product Owner | Product Owner |
-| Nikol Solaligue | Data Analyst | Project Manager + Data Cleaner | Metrics Evaluator |
-| Juan Ramos | Prototype Developer | Feature Engineer | Model Comparator |
-| Perla Gavilano | Project Manager + Business Analyst | Class Balancer | Baseline Trainer |
-| Julio Misari | Data Engineer | Pipeline Builder | Project Manager + Experiment Tracker |
+| Pedro Shiguihara | Product Owner | Product Owner | Product Owner |Product Owner |
+| Nikol Solaligue | Data Analyst | Project Manager + Data Cleaner | Metrics Evaluator |Final Validator |
+| Juan Ramos | Prototype Developer | Feature Engineer | Model Comparator | Project Manager + Experiment Tracker |
+| Perla Gavilano | Project Manager + Business Analyst | Class Balancer | Baseline Trainer | Hyperparameter Tuner |
+| Julio Misari | Data Engineer | Pipeline Builder | Project Manager + Experiment Tracker |Ensemble Engineer |
 
 
 
