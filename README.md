@@ -34,8 +34,8 @@
 
 ## Tabla Resumen de Roles por Sprint
 
-| Integrante | Sprint 1 | Sprint 2 | Sprint 3 |
-|------------|----------|----------|----------|
+| Integrante | Sprint 1 | Sprint 2 | Sprint 3 |Sprint 4 |
+|------------|----------|----------|----------|----------|
 | Pedro Shiguihara | Product Owner | Product Owner | Product Owner |Product Owner |
 | Nikol Solaligue | Data Analyst | Project Manager + Data Cleaner | Metrics Evaluator |Final Validator |
 | Juan Ramos | Prototype Developer | Feature Engineer | Model Comparator | Project Manager + Experiment Tracker |
