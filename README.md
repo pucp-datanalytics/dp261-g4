@@ -39,8 +39,8 @@
 | Pedro Shiguihara | Product Owner | Product Owner | Product Owner |Product Owner |
 | Nikol Solaligue | Data Analyst | Project Manager + Data Cleaner | Metrics Evaluator |Final Validator |
 | Juan Ramos | Prototype Developer | Feature Engineer | Model Comparator | Project Manager + Experiment Tracker |
-| Perla Gavilano | Project Manager + Business Analyst | Class Balancer | Baseline Trainer | Hyperparameter Tuner |
-| Julio Misari | Data Engineer | Pipeline Builder | Project Manager + Experiment Tracker |Ensemble Engineer |
+| Perla Gavilano | Project Manager + Business Analyst | Class Balancer | Baseline Trainer | Ensemble Engineer |
+| Julio Misari | Data Engineer | Pipeline Builder | Project Manager + Experiment Tracker |Hyperparameter Tuner |
 
 
 
