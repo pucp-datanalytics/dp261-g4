@@ -1,5 +1,5 @@
 # dp261-g4
-
+## Distribución de Issues por Sprint 1
 ## Miembros del Proyecto
 
 | Nombre | Rol |
@@ -10,6 +10,46 @@
 | _Julio Misari_ | _Data Engineer_ |
 | _Nikol Solaligue_ | _Data Analyst_ |
 | _Juan Ramos_ | _Prototype Developer_ |
+
+## Distribución de Issues por Sprint 2
+
+| Issue | Historia de Usuario | Responsable | 
+|-------|---------------------|-------------|
+| `feature/PB-07-data-cleaning` | PB-07: Limpiar y transformar variables | Nikol Solaligue | 
+| `feature/PB-08-feature-engineering` | PB-08: Realizar feature engineering | Juan Ramos | 
+| `feature/PB-09-class-balancing` | PB-09: Balancear clases si es necesario | Perla Gavilano | 
+| `feature/PB-10-pipeline-integration` | Pipeline Builder (integración completa) | Julio Misari | 
+
+## Distribución de Issues por Sprint 3
+
+| Issue | Historia de Usuario | Responsable |
+|-------|---------------------|-------------|
+| `feat/PB-10-baseline-models` | PB-10: Entrenar modelos baseline de clasificación | Perla Gavilano |
+| `feat/PB-11-model-evaluation` | PB-11: Evaluar modelos baseline con métricas | Nikol Solaligue |
+| `feat/PB-12-model-comparison` | PB-12: Comparar modelos y seleccionar candidatos | Juan Ramos |
+| `feat/EXP-experiment-tracking` | Registro de experimentos, versionado de modelos y soporte de coordinación del sprint | Julio Misari |
+
+## Distribución de Issues por Sprint 4
+
+| Issue | Historia de Usuario | Responsable |
+|-------|---------------------|-------------|
+| `feat/PB-13-baseline-models` | PB-13: Entrenar modelos baseline de clasificación | Perla Gavilano |
+| `feat/PB-14-model-evaluation` | PB-14: Evaluar modelos baseline con métricas | Julio Misari |
+| `feat/PB-15-model-comparison` | PB-15: Comparar modelos y seleccionar candidatos | Nikol Solaligue |
+| `feat/EXP-experiment-tracking` | Registro de experimentos, versionado de modelos y soporte de coordinación del sprint | Juan Ramos |
+---
+
+## Tabla Resumen de Roles por Sprint
+
+| Integrante | Sprint 1 | Sprint 2 | Sprint 3 |Sprint 4 |
+|------------|----------|----------|----------|----------|
+| Pedro Shiguihara | Product Owner | Product Owner | Product Owner |Product Owner |
+| Nikol Solaligue | Data Analyst | Project Manager + Data Cleaner | Metrics Evaluator |Final Validator |
+| Juan Ramos | Prototype Developer | Feature Engineer | Model Comparator | Project Manager + Experiment Tracker |
+| Perla Gavilano | Project Manager + Business Analyst | Class Balancer | Baseline Trainer | Ensemble Engineer |
+| Julio Misari | Data Engineer | Pipeline Builder | Project Manager + Experiment Tracker |Hyperparameter Tuner |
+
+
 
 ## GitHub Project
 
