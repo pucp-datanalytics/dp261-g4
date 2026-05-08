@@ -29,7 +29,14 @@
 | `feat/PB-12-model-comparison` | PB-12: Comparar modelos y seleccionar candidatos | Juan Ramos |
 | `feat/EXP-experiment-tracking` | Registro de experimentos, versionado de modelos y soporte de coordinación del sprint | Julio Misari |
 
+## Distribución de Issues por Sprint 4
 
+| Issue | Historia de Usuario | Responsable |
+|-------|---------------------|-------------|
+| `feat/PB-13-baseline-models` | PB-13: Entrenar modelos baseline de clasificación | Perla Gavilano |
+| `feat/PB-14-model-evaluation` | PB-14: Evaluar modelos baseline con métricas | Julio Misari |
+| `feat/PB-15-model-comparison` | PB-15: Comparar modelos y seleccionar candidatos | Nikol Solaligue |
+| `feat/EXP-experiment-tracking` | Registro de experimentos, versionado de modelos y soporte de coordinación del sprint | Juan Ramos |
 ---
 
 ## Tabla Resumen de Roles por Sprint
