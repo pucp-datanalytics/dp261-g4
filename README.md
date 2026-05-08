@@ -33,20 +33,20 @@
 
 | Issue | Historia de Usuario | Responsable |
 |-------|---------------------|-------------|
-| `feat/PB-10-baseline-models` | PB-10: Entrenar modelos baseline de clasificación | Perla Gavilano |
-| `feat/PB-11-model-evaluation` | PB-11: Evaluar modelos baseline con métricas | Nikol Solaligue |
-| `feat/PB-12-model-comparison` | PB-12: Comparar modelos y seleccionar candidatos | Juan Ramos |
+| `feat/PB-10-baseline-models` | PB-13: Optimizar hiperparametros de los candidatos | Perla Gavilano |
+| `feat/PB-11-model-evaluation` | PB-14: Aplicar tecnicas avanzadas:ensambles, stacking y gradiente boosting| Nikol Solaligue |
+| `feat/PB-12-model-comparison` | PB-15: Validar el modelo final en el test set y confirmar generalizacion | Juan Ramos |
 | `feat/EXP-experiment-tracking` | Registro de experimentos, versionado de modelos y soporte de coordinación del sprint | Julio Misari |
 
 ---
 
 ## Tabla Resumen de Roles por Sprint
 
-| Integrante | Sprint 1 | Sprint 2 | Sprint 3 |
-|------------|----------|----------|----------|
-| Pedro Shiguihara | Product Owner | Product Owner | Product Owner |
+| Integrante | Sprint 1 | Sprint 2 | Sprint 3 |Sprint 4 |
+|------------|----------|----------|----------|----------|
+| Pedro Shiguihara | Product Owner | Product Owner | Product Owner | Product Owner |
 | Nikol Solaligue | Data Analyst | Project Manager + Data Cleaner | Metrics Evaluator |
-| Juan Ramos | Prototype Developer | Feature Engineer | Model Comparator |
+| Juan Ramos | Prototype Developer | Feature Engineer | Model Comparator |Project Manager + Experiment tracker |
 | Perla Gavilano | Project Manager + Business Analyst | Class Balancer | Baseline Trainer |
 | Julio Misari | Data Engineer | Pipeline Builder | Project Manager + Experiment Tracker |
 
