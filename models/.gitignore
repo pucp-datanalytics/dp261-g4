@@ -3,3 +3,4 @@
 /lightgbm_base.pkl
 /tuned_xgboost.pkl
 /tuned_lightgbm.pkl
+/final_model.pkl
