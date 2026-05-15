@@ -84,14 +84,14 @@ Reglas de gestion:
 
 | Criterio | Estado |
 |---|---|
-| Issues PB-16, PB-17, PB-18 creados y asignados | Pendiente en GitHub |
-| Roles y revisores cruzados definidos | Pendiente en GitHub |
-| `15_business_value.ipynb` ejecuta de inicio a fin | En progreso |
-| Umbral optimo justificado con valor esperado | En progreso |
-| Dashboard ejecutable localmente | Pendiente |
-| Reporte ejecutivo con resumen de 1 pagina | Pendiente |
-| Riesgos y supuestos documentados | En progreso |
-| Paquete handoff listo para Sprint 6 | Pendiente |
+| Issues PB-16, PB-17, PB-18 creados y asignados | Listo en plan PM; sincronizacion GitHub pendiente |
+| Roles y revisores cruzados definidos | Listo en plan PM; sincronizacion GitHub pendiente |
+| `15_business_value.ipynb` ejecuta de inicio a fin | OK segun revision Sprint 5 |
+| Umbral optimo justificado con valor esperado | OK en `models/business_value_recommendations.csv` |
+| Dashboard ejecutable localmente | Creado; ejecucion bloqueada si `streamlit` no esta instalado |
+| Reporte ejecutivo con resumen de 1 pagina | OK en `reports/executive_summary_sprint5.md` |
+| Riesgos y supuestos documentados | OK en reporte final y validacion sponsor |
+| Paquete handoff listo para Sprint 6 | OK en `handoff/` |
 
 ## Riesgos de Gestion
 
