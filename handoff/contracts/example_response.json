@@ -1,0 +1,8 @@
+{
+  "probability_revenue": 0.67,
+  "prediction": 1,
+  "threshold": 0.5,
+  "model_name": "XGBoost tuned",
+  "policy": "global_conservative",
+  "recommended_action": "Prioritize for campaign review"
+}
