@@ -1,0 +1,2 @@
+sessions,real_conversion_rate,real_buyers,f1,recall,precision,roc_auc,recommended_threshold,expected_value,detected_buyers
+12205,0.15632937320770177,1908,0.687041564792176,0.7356020942408377,0.6444954128440367,0.9335556578321708,0.1,28930.0,365

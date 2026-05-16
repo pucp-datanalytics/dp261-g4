@@ -47,6 +47,48 @@ Los notebooks son entregables de apoyo por sprint. La logica principal se mantie
 - Sprint 4: `notebooks/c_12_hyperparam_tuning.ipynb`, `notebooks/c_13_ensembles.ipynb`, `notebooks/c_14_final_validation.ipynb`
 - Sprint 5: `notebooks/c_15_business_value.ipynb`, `notebooks/c_16_dashboard_prototype.ipynb`, `notebooks/c_17_findings_report.ipynb`
 
+## Dashboard ejecutivo Sprint 5
+
+Ejecutar desde la raiz:
+
+```bash
+streamlit run dashboard/c_app.py
+```
+
+El dashboard muestra una vista ejecutiva para stakeholders de e-commerce:
+
+- problema de negocio y target `Revenue=True`
+- KPIs del modelo final: F1-score, recall, precision y ROC-AUC
+- conversion real, visitantes evaluados y compradores detectados
+- comparacion visual de modelos por F1-score
+- matriz de confusion explicada en lenguaje de negocio
+- sensibilidad de valor esperado por threshold
+- simulador interactivo de visitante
+- analisis por tipo de visitante, mes de visita, fin de semana y variables de intencion
+- recomendaciones accionables
+- handoff preparado para Sprint 6
+
+Archivos principales que lee:
+
+- `docs/dataset_pucp.csv`
+- `models/c_final_model.pkl`
+- `models/c_metrics_summary.csv`
+- `models/c_validation_test_comparison.csv`
+- `models/c_threshold_analysis.csv`
+- `models/c_dashboard_kpis.csv`
+- `models/c_dashboard_segments.csv`
+- `models/c_dashboard_feature_summary.csv`
+
+Interpretacion rapida:
+
+- F1-score resume el equilibrio entre detectar compradores y evitar falsas alarmas.
+- Recall indica cuantos compradores reales captura el modelo.
+- Precision indica que porcentaje de visitantes priorizados realmente compra.
+- ROC-AUC mide la capacidad general de separar compradores de no compradores.
+- El threshold de negocio puede ser distinto de 0.5 porque depende de costos y beneficios.
+
+Este dashboard no implementa API, AWS ni Docker; es un prototipo ejecutivo local de Sprint 5.
+
 ## Artefactos principales
 
 - `models/c_baseline_*.pkl`
