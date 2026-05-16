@@ -37,6 +37,16 @@ python src/c_predict.py
 streamlit run dashboard/c_app.py
 ```
 
+## Notebooks academicos
+
+Los notebooks son entregables de apoyo por sprint. La logica principal se mantiene en scripts `src/c_*.py` y los notebooks documentan/ejecutan el flujo con rutas relativas:
+
+- Sprint 1: `notebooks/c_01_business.ipynb`, `notebooks/c_02_data_loading.ipynb`, `notebooks/c_03_eda.ipynb`, `notebooks/c_04_prototype.ipynb`
+- Sprint 2: `notebooks/c_05_data_cleaning.ipynb`, `notebooks/c_06_feature_eng.ipynb`, `notebooks/c_07_class_balance.ipynb`, `notebooks/c_08_pipeline.ipynb`
+- Sprint 3: `notebooks/c_09_baseline_models.ipynb`, `notebooks/c_10_evaluation.ipynb`, `notebooks/c_11_model_comparison.ipynb`
+- Sprint 4: `notebooks/c_12_hyperparam_tuning.ipynb`, `notebooks/c_13_ensembles.ipynb`, `notebooks/c_14_final_validation.ipynb`
+- Sprint 5: `notebooks/c_15_business_value.ipynb`, `notebooks/c_16_dashboard_prototype.ipynb`, `notebooks/c_17_findings_report.ipynb`
+
 ## Artefactos principales
 
 - `models/c_baseline_*.pkl`
