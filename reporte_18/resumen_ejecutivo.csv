@@ -1,0 +1,8 @@
+metrica,valor
+Mejor modelo,XGBoost base
+Umbral óptimo,0.07
+Valor esperado,"$24,000"
+Recall,93.7%
+Precisión,42.0%
+Lift a 20%,3.8x
+Gain a 20%,76.7%
