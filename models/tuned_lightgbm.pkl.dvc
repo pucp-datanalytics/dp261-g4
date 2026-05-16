@@ -1,0 +1,5 @@
+outs:
+- md5: 8c0f6011281c4a0d25e78c80b59dfaac
+  size: 1640324
+  hash: md5
+  path: tuned_lightgbm.pkl
