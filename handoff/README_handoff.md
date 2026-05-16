@@ -45,6 +45,27 @@ Archivos en `handoff/contracts/`:
 6. Devolver output compatible con `output_schema.json`.
 7. Registrar predicciones y resultados reales para monitoreo.
 
+## Checklist de Entrada para Sprint 6
+
+Antes de iniciar el MVP tecnico, el equipo debe confirmar:
+
+| Item | Estado esperado |
+|---|---|
+| Modelo elegido para piloto | XGBoost tuned para ranking global o Random Forest para captura. |
+| Politica de decision | Threshold configurable o top-k segun presupuesto de campana. |
+| Contrato de entrada | Aprobado por equipo tecnico. |
+| Contrato de salida | Aprobado por equipo tecnico y negocio. |
+| Dependencias | Ambiente con librerias de modelo y dashboard instaladas. |
+| Variables criticas | Confirmar disponibilidad de `PageValues` y `VisitorType`. |
+| Costos de negocio | Validar TP, FP y FN con sponsor antes de activar campanas. |
+| Monitoreo | Registrar prediccion, probabilidad, threshold, accion y resultado real. |
+
+## Recomendacion QA para Implementacion
+
+Para reducir riesgo en Sprint 6, se recomienda empezar con una API que reciba features procesadas segun `handoff/contracts/input_schema.json`. En paralelo, puede documentarse una segunda version que reciba variables crudas y aplique `models/preprocessing_pipeline.pkl`.
+
+No se recomienda mezclar transformaciones manuales distintas entre dashboard y API sin pruebas de equivalencia, porque podria producir predicciones inconsistentes.
+
 ## Riesgos para Deployment
 
 - Confirmar si `PageValues` esta disponible al momento de scoring.
@@ -52,6 +73,8 @@ Archivos en `handoff/contracts/`:
 - Evitar hardcodear un unico threshold.
 - Monitorear drift de conversion y distribucion de visitantes.
 - Validar que el dashboard y API usen las mismas features.
+- Agregar dependencias faltantes del dashboard antes de la demo (`streamlit`, `plotly`, `shap`).
+- Mantener trazabilidad de cada prediccion para recalibrar thresholds con resultados reales.
 
 ## Decision de Handoff
 

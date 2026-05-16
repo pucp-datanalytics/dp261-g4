@@ -17,6 +17,8 @@
 | Disponibilidad MVP | >= 95% durante demo/piloto |
 | Error rate API | < 1% requests invalidos no controlados |
 | Validacion schema | 100% requests validados |
+| Trazabilidad de predicciones | 100% de predicciones registradas |
+| Threshold configurable | Disponible sin reentrenar modelo |
 
 ## Monitoreo Recomendado
 
@@ -26,6 +28,9 @@
 - Conversion real posterior a contacto.
 - Precision y recall recalculados semanalmente.
 - Drift en `VisitorType`, `PageValues`, `BounceRates`, `ExitRates`.
+- Threshold usado en cada decision.
+- Modelo/version usado en cada prediccion.
+- Motivo de rechazo para requests invalidos.
 
 ## Criterios Go / No-Go
 
@@ -42,3 +47,15 @@ No-Go:
 - Costos de contacto no validados.
 - No existe trazabilidad de predicciones.
 - Dashboard/API usan features distintas.
+- No se puede cambiar threshold sin modificar codigo.
+- El dashboard no puede ejecutarse por dependencias ausentes antes de la demo.
+
+## Evidencia Minima para Cierre QA
+
+| Evidencia | Responsable | Estado esperado |
+|---|---|---|
+| Dashboard ejecutado localmente o limitacion documentada | Dashboard Developer / QA | OK o pendiente justificado |
+| Contratos JSON validados | QA | OK |
+| Reporte final revisado | Documentation Lead / QA | OK |
+| Preguntas sponsor preparadas | QA & Stakeholder Reviewer | OK |
+| Decision Go/No-Go documentada | QA & Stakeholder Reviewer | OK |
