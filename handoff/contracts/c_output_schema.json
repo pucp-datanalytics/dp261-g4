@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "required": [
+    "purchase_probability",
+    "prediction",
+    "threshold",
+    "model_path"
+  ],
+  "properties": {
+    "purchase_probability": {"type": "number"},
+    "prediction": {"type": "integer", "enum": [0, 1]},
+    "threshold": {"type": "number"},
+    "model_path": {"type": "string"}
+  }
+}

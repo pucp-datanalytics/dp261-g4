@@ -1,196 +1,67 @@
-# dp261-g4
-## Distribución de Issues por Sprint 1
-## Miembros del Proyecto
+# Proyecto 2: Conversion de Visitantes en Compradores Online
 
-| Nombre | Rol |
-|--------|-----|
-| Pedro Shiguihara | Product Owner (P.O) |
-| _Perla Gavilano_ | _Project Manager_ |
-| _Perla Gavilano_ | _Business Analyst_ |
-| _Julio Misari_ | _Data Engineer_ |
-| _Nikol Solaligue_ | _Data Analyst_ |
-| _Juan Ramos_ | _Prototype Developer_ |
+Reconstruccion individual limpia y reproducible hasta Sprint 5.
 
-## Distribución de Issues por Sprint 2
+## Alcance
 
-| Issue | Historia de Usuario | Responsable | 
-|-------|---------------------|-------------|
-| `feature/PB-07-data-cleaning` | PB-07: Limpiar y transformar variables | Nikol Solaligue | 
-| `feature/PB-08-feature-engineering` | PB-08: Realizar feature engineering | Juan Ramos | 
-| `feature/PB-09-class-balancing` | PB-09: Balancear clases si es necesario | Perla Gavilano | 
-| `feature/PB-10-pipeline-integration` | Pipeline Builder (integración completa) | Julio Misari | 
+- Sprint 1: Business Understanding y Data Understanding.
+- Sprint 2: Data Preparation con pipeline reproducible.
+- Sprint 3: modelos baseline.
+- Sprint 4: modelos avanzados, tuning y seleccion final.
+- Sprint 5: evaluacion, Business Value, dashboard y recomendaciones.
+- Sprint 6: solo referencia para handoff futuro. No hay API, Docker, AWS ni CI/CD.
 
-## Distribución de Issues por Sprint 3
+## Dataset
 
-| Issue | Historia de Usuario | Responsable |
-|-------|---------------------|-------------|
-| `feat/PB-10-baseline-models` | PB-10: Entrenar modelos baseline de clasificación | Perla Gavilano |
-| `feat/PB-11-model-evaluation` | PB-11: Evaluar modelos baseline con métricas | Nikol Solaligue |
-| `feat/PB-12-model-comparison` | PB-12: Comparar modelos y seleccionar candidatos | Juan Ramos |
-| `feat/EXP-experiment-tracking` | Registro de experimentos, versionado de modelos y soporte de coordinación del sprint | Julio Misari |
+- Oficial: `docs/dataset_pucp.csv`
+- Copia de trabajo: `data/raw/c_dataset_pucp.csv`
+- Target: `Revenue`
+- Clase positiva: `Revenue=True`
+- Problema: clasificacion binaria desbalanceada.
 
-## Distribución de Issues por Sprint 4
+## Instalacion
 
-| Issue | Historia de Usuario | Responsable |
-|-------|---------------------|-------------|
-| `feat/PB-10-baseline-models` | PB-13: Optimizar hiperparametros de los candidatos | Perla Gavilano |
-| `feat/PB-11-model-evaluation` | PB-14: Aplicar tecnicas avanzadas:ensambles, stacking y gradiente boosting| Nikol Solaligue |
-| `feat/PB-12-model-comparison` | PB-15: Validar el modelo final en el test set y confirmar generalizacion | Juan Ramos |
-| `feat/EXP-experiment-tracking` | Registro de experimentos, versionado de modelos y soporte de coordinación del sprint | Julio Misari |
+```bash
+pip install -r requirements.txt
+```
 
----
+## Ejecucion
 
-## Tabla Resumen de Roles por Sprint
+Desde la raiz del repositorio:
 
-| Integrante | Sprint 1 | Sprint 2 | Sprint 3 |Sprint 4 |
-|------------|----------|----------|----------|----------|
-| Pedro Shiguihara | Product Owner | Product Owner | Product Owner | Product Owner |
-| Nikol Solaligue | Data Analyst | Project Manager + Data Cleaner | Metrics Evaluator |
-| Juan Ramos | Prototype Developer | Feature Engineer | Model Comparator |Project Manager + Experiment tracker |
-| Perla Gavilano | Project Manager + Business Analyst | Class Balancer | Baseline Trainer |
-| Julio Misari | Data Engineer | Pipeline Builder | Project Manager + Experiment Tracker |
+```bash
+python src/c_train_baselines.py
+python src/c_tune_models.py
+python src/c_evaluate_business_value.py
+python src/c_predict.py
+streamlit run dashboard/c_app.py
+```
 
+## Artefactos principales
 
+- `models/c_baseline_*.pkl`
+- `models/c_tuned_*.pkl`
+- `models/c_best_model.pkl`
+- `models/c_final_model.pkl`
+- `models/c_preproc.pkl`
+- `models/c_preprocessing_pipeline.pkl`
+- `models/c_metrics_summary.csv`
+- `models/c_experiments_log.csv`
+- `models/c_validation_test_comparison.csv`
+- `models/c_threshold_analysis.csv`
+- `reports/c_model_validation_report.md`
+- `reports/c_business_value_summary.md`
+- `reports/c_recommendations.md`
+- `handoff/c_notes_for_sprint6.md`
 
-## GitHub Project
+## Prevencion de data leakage
 
-Tablero del proyecto: [dp261-g4 Project](https://github.com/orgs/pucp-datanalytics/projects/4)
-Tablero creado por nosotros: https://github.com/users/perlagzav/projects/2
-## Labels
+El split train/test se hace antes de cualquier `fit` con `train_test_split(..., stratify=y, random_state=42)`. El preprocesamiento se encapsula con `ColumnTransformer`. El balanceo se integra en `imblearn.pipeline.Pipeline`, por lo que SMOTE se aplica solo sobre train durante entrenamiento y cross-validation. El test set solo se usa para evaluacion final.
 
-Los labels del repositorio siguen una convencion de prefijos para organizar el trabajo:
+## Seleccion del modelo
 
-| Prefijo | Color | Descripcion |
-|---------|-------|-------------|
-| `scrum/` | `#0052CC` | `scrum/user-story`, `scrum/task`, `scrum/bug`, `scrum/backlog`, `scrum/in-progress`, `scrum/blocked`, `scrum/review`, `scrum/done` |
-| `crisp/` | `#006B75` | `crisp/sprint1-business-data-understanding`, `crisp/sprint2-data-preparation`, `crisp/sprint3-modeling-baseline`, `crisp/sprint4-modeling-advanced`, `crisp/sprint5-evaluation`, `crisp/sprint6-deployment` |
-| `rol/` | `#E65100` | `rol/pm`, `rol/ba`, `rol/de`, `rol/da`, `rol/pd` |
-| `entrega/` | `#5319E7` | `entrega/notebook`, `entrega/dataset`, `entrega/environment`, `entrega/dashboard`, `entrega/model`, `entrega/report`, `entrega/docs`, `entrega/api-rest`, `entrega/aws-deploy` |
-| `prioridad/` | `#B60205` | `prioridad/high`, `prioridad/medium`, `prioridad/low` |
+El criterio principal es F1-score. Accuracy, precision, recall y ROC-AUC se reportan como soporte. Si dos modelos tienen F1 similar, se revisan recall, ROC-AUC, estabilidad y facilidad de despliegue futuro.
 
-### Detalle de Labels
+## Sprint 6 futuro
 
-**`scrum/`**
-
-| Label | Descripcion |
-|-------|-------------|
-| `scrum/user-story` | Historia de usuario |
-| `scrum/task` | Tarea técnica del sprint |
-| `scrum/bug` | Error o fallo en el entregable |
-| `scrum/backlog` | Pendiente en el product backlog |
-| `scrum/in-progress` | En desarrollo activo |
-| `scrum/blocked` | Bloqueado, requiere atención |
-| `scrum/review` | En revisión del equipo |
-| `scrum/done` | Completado y aprobado |
-
-**`crisp/`**
-
-| Label | Descripcion |
-|-------|-------------|
-| `crisp/sprint1-business-data-understanding` | Sprint 1: Business & Data Understanding |
-| `crisp/sprint2-data-preparation` | Sprint 2: Data Preparation |
-| `crisp/sprint3-modeling-baseline` | Sprint 3: Modeling baseline |
-| `crisp/sprint4-modeling-advanced` | Sprint 4: Modeling avanzado + tuning |
-| `crisp/sprint5-evaluation` | Sprint 5: Evaluation + Business Value |
-| `crisp/sprint6-deployment` | Sprint 6: Deployment MVP en AWS |
-
-**`rol/`**
-
-| Label | Descripcion |
-|-------|-------------|
-| `rol/pm` | Project Manager |
-| `rol/ba` | Business Analyst |
-| `rol/de` | Data Engineer |
-| `rol/da` | Data Analyst |
-| `rol/pd` | Prototype Developer |
-
-**`entrega/`**
-
-| Label | Descripcion |
-|-------|-------------|
-| `entrega/notebook` | Jupyter Notebook |
-| `entrega/dataset` | Conjunto de datos (DVC) |
-| `entrega/environment` | environment.yml / entorno Conda |
-| `entrega/dashboard` | Visualización / Dashboard interactivo |
-| `entrega/model` | Modelo entrenado y serializado |
-| `entrega/report` | Informe o presentación ejecutiva |
-| `entrega/docs` | Documentación del proyecto |
-| `entrega/api-rest` | API REST del modelo desplegada |
-| `entrega/aws-deploy` | Despliegue en AWS (EC2/Lambda/SageMaker) |
-
-**`prioridad/`**
-
-| Label | Descripcion |
-|-------|-------------|
-| `prioridad/high` | Prioridad alta |
-| `prioridad/medium` | Prioridad media |
-| `prioridad/low` | Prioridad baja |
-
-## Milestones
-
-| Sprint | Titulo | Fecha de entrega |
-|--------|--------|------------------|
-| 1 | Sprint 1 — Business & Data Understanding | 10/04/2026 |
-| 2 | Sprint 2 — Data Preparation | 17/04/2026 |
-| 3 | Sprint 3 — Modeling (Baseline) | 24/04/2026 |
-| 4 | Sprint 4 — Modeling (Avanzado + Tuning) | 08/05/2026 |
-| 5 | Sprint 5 — Evaluation + Business Value | 15/05/2026 |
-| 6 | Sprint 6 — Deployment MVP en AWS | 22/05/2026 |
-
-### Detalle de Milestones
-
-**Sprint 1 — Business & Data Understanding** (entrega: 10/04/2026)
-
-Comprender el problema de negocio y explorar los datos.
-Entregables:
-- Repositorio GitHub configurado con board Kanban, Issues creados y asignados, README (PM)
-- 01_business.ipynb: problema de negocio, variable objetivo, KPIs y criterios de éxito (BA)
-- environment.yml + 02_data_loading.ipynb: entorno Conda, DVC configurado, carga y verificación de datos (DE)
-- 03_eda.ipynb: análisis de calidad, estadísticas descriptivas, visualizaciones y hallazgos (DA)
-- 04_prototype.ipynb: prototipo interactivo con ipywidgets (PD)
-
-**Sprint 2 — Data Preparation** (entrega: 17/04/2026)
-
-Limpiar, transformar y construir features del dataset.
-Entregables:
-- Pipeline de limpieza y transformación de datos
-- Ingeniería de características (feature engineering)
-- Dataset final listo para modelado versionado con DVC
-- Notebook documentado con cada decisión de preprocesamiento
-
-**Sprint 3 — Modeling (Baseline)** (entrega: 24/04/2026)
-
-Entrenar y comparar modelos de clasificación baseline.
-Entregables:
-- Notebook de experimentación con modelos baseline (Logistic Regression, Decision Tree, etc.)
-- Métricas comparativas: accuracy, precision, recall, F1, ROC-AUC
-- Selección del mejor modelo baseline con justificación
-- Registro de experimentos documentado
-
-**Sprint 4 — Modeling (Avanzado + Tuning)** (entrega: 08/05/2026)
-
-Optimizar hiperparámetros y aplicar modelos avanzados.
-Entregables:
-- Notebook con modelos avanzados (Random Forest, XGBoost, etc.)
-- Optimización de hiperparámetros (GridSearchCV / Optuna)
-- Comparativa final de modelos con métricas detalladas
-- Modelo final seleccionado y serializado (pickle/joblib)
-
-**Sprint 5 — Evaluation + Business Value** (entrega: 15/05/2026)
-
-Evaluar el Business Value y documentar resultados finales.
-Entregables:
-- Evaluación del modelo frente a los KPIs definidos en Sprint 1
-- Análisis de errores e interpretabilidad (SHAP, feature importance)
-- Dashboard interactivo con resultados para stakeholders
-- Informe ejecutivo con conclusiones y recomendaciones
-
-**Sprint 6 — Deployment MVP en AWS** (entrega: 22/05/2026)
-
-Desplegar el mejor modelo como MVP en AWS.
-Entregables:
-- API REST del modelo desplegada en AWS (EC2, Lambda o SageMaker)
-- Dashboard interactivo accesible en producción
-- Documentación de arquitectura y guía de uso
-- Demo funcional del MVP presentada al stakeholder
-
+El Sprint 6 puede usar `models/c_final_model.pkl`, `models/c_preprocessing_pipeline.pkl`, `src/c_predict.py` y `handoff/contracts/` como punto de partida para una API FastAPI. Esta reconstruccion no crea API, Dockerfile, infraestructura AWS ni CI/CD.

@@ -1,0 +1,27 @@
+{
+  "assumptions": {
+    "benefit_true_positive": 100.0,
+    "cost_false_positive": -10.0,
+    "cost_false_negative": -80.0,
+    "benefit_true_negative": 0.0,
+    "note": "Supuestos razonables y modificables ante falta de costos reales."
+  },
+  "recommended_business_threshold": {
+    "threshold": 0.1,
+    "tn": 1438.0,
+    "fp": 621.0,
+    "fn": 17.0,
+    "tp": 365.0,
+    "expected_value": 28930.0,
+    "value_per_session": 11.85170012290045
+  },
+  "default_threshold": {
+    "threshold": 0.5,
+    "tn": 1904,
+    "fp": 155,
+    "fn": 101,
+    "tp": 281,
+    "expected_value": 18470.0,
+    "value_per_session": 7.566571077427284
+  }
+}

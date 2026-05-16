@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "required": [
+    "Administrative",
+    "Administrative_Duration",
+    "Informational",
+    "Informational_Duration",
+    "ProductRelated",
+    "ProductRelated_Duration",
+    "BounceRates",
+    "ExitRates",
+    "PageValues",
+    "SpecialDay",
+    "Month",
+    "OperatingSystems",
+    "Browser",
+    "Region",
+    "TrafficType",
+    "VisitorType",
+    "Weekend"
+  ],
+  "properties": {
+    "Administrative": {"type": "number"},
+    "Administrative_Duration": {"type": "number"},
+    "Informational": {"type": "number"},
+    "Informational_Duration": {"type": "number"},
+    "ProductRelated": {"type": "number"},
+    "ProductRelated_Duration": {"type": "number"},
+    "BounceRates": {"type": "number"},
+    "ExitRates": {"type": "number"},
+    "PageValues": {"type": "number"},
+    "SpecialDay": {"type": "number"},
+    "Month": {"type": "string"},
+    "OperatingSystems": {"type": "number"},
+    "Browser": {"type": "number"},
+    "Region": {"type": "number"},
+    "TrafficType": {"type": "number"},
+    "VisitorType": {"type": "string"},
+    "Weekend": {"type": "boolean"}
+  }
+}
