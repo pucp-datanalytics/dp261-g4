@@ -2,13 +2,15 @@
 # DATOS
 # ======================
 
-# Ignorar archivos generados en processed, pero permitir los .dvc
+# Ignorar archivos generados antiguos en processed, pero permitir reconstruccion c_
 data/processed/*
+!data/processed/c_*
 !data/processed/*.dvc
 !data/processed/.gitkeep
 
-# Ignorar datasets en raw (pero no los .dvc)
+# Ignorar datasets antiguos en raw, pero permitir copia c_
 data/raw/*.csv
+!data/raw/c_*.csv
 !data/raw/*.dvc
 !data/raw/.gitkeep
 

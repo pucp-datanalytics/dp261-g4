@@ -1,0 +1,127 @@
+# Contrato API PB-19
+
+Base local:
+
+```text
+http://localhost:8000
+```
+
+Variable para PB-21:
+
+```text
+API_URL=http://localhost:8000
+```
+
+En AWS, PB-20 debera reemplazar este valor por el endpoint publico/privado desplegado.
+
+## GET /health
+
+Verifica que la API esta viva.
+
+```powershell
+curl http://localhost:8000/health
+```
+
+Respuesta esperada:
+
+```json
+{
+  "status": "ok",
+  "service": "sprint6-pb19-api"
+}
+```
+
+## GET /version
+
+Devuelve informacion de version, modelo y threshold.
+
+```powershell
+curl http://localhost:8000/version
+```
+
+Respuesta esperada:
+
+```json
+{
+  "project": "Proyecto 2 - Conversion de Visitantes Online",
+  "api_version": "1.0.0-pb19",
+  "model_path": "handoff/model/c_final_model.pkl",
+  "preprocessor_path": "handoff/model/c_preprocessing_pipeline.pkl",
+  "model_is_pipeline": true,
+  "threshold": 0.5
+}
+```
+
+## POST /predict
+
+Recibe las variables de una sesion online y devuelve probabilidad de compra y clase predicha.
+
+```powershell
+curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+```
+
+Request esperado:
+
+```json
+{
+  "Administrative": 0,
+  "Administrative_Duration": 0.0,
+  "Informational": 0,
+  "Informational_Duration": 0.0,
+  "ProductRelated": 1,
+  "ProductRelated_Duration": 0.0,
+  "BounceRates": 0.2,
+  "ExitRates": 0.2,
+  "PageValues": 0.0,
+  "SpecialDay": 0.0,
+  "Month": "Feb",
+  "OperatingSystems": 1,
+  "Browser": 1,
+  "Region": 1,
+  "TrafficType": 1,
+  "VisitorType": "Returning_Visitor",
+  "Weekend": false
+}
+```
+
+Response esperado:
+
+```json
+{
+  "purchase_probability": 0.12,
+  "prediction": 0,
+  "threshold": 0.5,
+  "model_path": "handoff/model/c_final_model.pkl"
+}
+```
+
+El valor exacto de `purchase_probability` depende del modelo final y del threshold configurado.
+
+## Codigos de error
+
+| Codigo | Caso |
+|---|---|
+| 400 | JSON invalido, columnas faltantes, tipos invalidos o variables extra no permitidas |
+| 500 | Error cargando modelo, error inesperado de prediccion o configuracion invalida |
+
+## Entrega para PB-20
+
+PB-20 debe tomar:
+
+- `api/Dockerfile`;
+- `api/requirements.txt`;
+- codigo de `api/`;
+- artefactos de `handoff/model/`;
+- endpoint `/health` para health checks;
+- variables `MODEL_PATH`, `PREPROCESSOR_PATH` y `THRESHOLD`;
+- este contrato para smoke tests en AWS.
+
+## Entrega para PB-21
+
+PB-21 debe usar:
+
+- `API_URL` como variable de entorno;
+- `POST {API_URL}/predict`;
+- payload compatible con `handoff/contracts/c_example_request.json`;
+- respuesta compatible con `handoff/contracts/c_output_schema.json`;
+- manejo de timeouts, errores 400/500 y API no disponible.
