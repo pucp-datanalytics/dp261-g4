@@ -34,7 +34,7 @@ python src/c_train_baselines.py
 python src/c_tune_models.py
 python src/c_evaluate_business_value.py
 python src/c_predict.py
-streamlit run dashboard/c_app.py
+streamlit run dashboard/c_app.ipynb
 ```
 
 ## Notebooks academicos
@@ -52,7 +52,7 @@ Los notebooks son entregables de apoyo por sprint. La logica principal se mantie
 Ejecutar desde la raiz:
 
 ```bash
-streamlit run dashboard/c_app.py
+streamlit run dashboard/c_app.ipynb
 ```
 
 Para la integracion PB-21 del Sprint 6, el simulador consume la API REST por HTTP:

@@ -276,7 +276,7 @@ def build_document() -> WordDoc:
     add_bullets(
         doc,
         [
-            "Se construyó dashboard/c_app.py con layout ejecutivo orientado a negocio.",
+            "Se construyó dashboard/c_app.ipynb con layout ejecutivo orientado a negocio.",
             "Incluye KPIs, desempeño del modelo, matriz de confusión, sensibilidad por threshold y valor esperado.",
             "Incluye simulador interactivo de visitante con etiquetas en español.",
             "Incluye análisis de segmentos, importancia de variables, recomendaciones y handoff Sprint 6.",
@@ -315,7 +315,7 @@ def build_document() -> WordDoc:
             "models/c_preproc.pkl y models/c_preprocessing_pipeline.pkl",
             "models/c_metrics_summary.csv y models/c_validation_test_comparison.csv",
             "src/c_predict.py como referencia de inferencia local",
-            "dashboard/c_app.py como prototipo ejecutivo Sprint 5",
+            "dashboard/c_app.ipynb como prototipo ejecutivo Sprint 5",
             "handoff/c_notes_for_sprint6.md",
             "handoff/contracts/c_input_schema.json y c_output_schema.json",
             "handoff/contracts/c_example_request.json y c_example_response.json",

@@ -27,7 +27,7 @@ Comunicar a stakeholders no tecnicos:
 ## Comando
 
 ```bash
-streamlit run dashboard/c_app.py
+streamlit run dashboard/c_app.ipynb
 ```
 
 Este dashboard es un prototipo local de Sprint 5. No implementa API, Docker ni AWS.
