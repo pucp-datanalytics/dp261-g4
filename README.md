@@ -9,7 +9,7 @@ Reconstruccion individual limpia y reproducible hasta Sprint 5.
 - Sprint 3: modelos baseline.
 - Sprint 4: modelos avanzados, tuning y seleccion final.
 - Sprint 5: evaluacion, Business Value, dashboard y recomendaciones.
-- Sprint 6: solo referencia para handoff futuro. No hay API, Docker, AWS ni CI/CD.
+- Sprint 6: API REST, integracion dashboard-API y despliegue MVP con Docker + EC2.
 
 ## Dataset
 
@@ -34,7 +34,7 @@ python src/c_train_baselines.py
 python src/c_tune_models.py
 python src/c_evaluate_business_value.py
 python src/c_predict.py
-streamlit run dashboard/c_app.ipynb
+streamlit run dashboard/c_app.py
 ```
 
 ## Notebooks academicos
@@ -47,13 +47,42 @@ Los notebooks son entregables de apoyo por sprint. La logica principal se mantie
 - Sprint 4: `notebooks/c_12_hyperparam_tuning.ipynb`, `notebooks/c_13_ensembles.ipynb`, `notebooks/c_14_final_validation.ipynb`
 - Sprint 5: `notebooks/c_15_business_value.ipynb`, `notebooks/c_16_dashboard_prototype.ipynb`, `notebooks/c_17_findings_report.ipynb`
 
-## Dashboard ejecutivo Sprint 5
+## Dashboard ejecutivo Sprint 5 / Sprint 6
 
 Ejecutar desde la raiz:
 
 ```bash
-streamlit run dashboard/c_app.ipynb
+streamlit run dashboard/c_app.py
 ```
+
+Para la integracion PB-21 del Sprint 6, el simulador consume la API REST por HTTP:
+
+```bash
+API_URL=http://localhost:8000 streamlit run dashboard/c_app.py
+```
+
+En Windows PowerShell:
+
+```powershell
+$env:API_URL="http://localhost:8000"
+streamlit run dashboard/c_app.py
+```
+
+Si PB-20 despliega la API en AWS, reemplazar `API_URL` por el endpoint entregado.
+
+## Despliegue MVP Sprint 6
+
+El repositorio incluye un `Dockerfile` para publicar el dashboard Streamlit en el puerto `8080` y un workflow en `.github/workflows/cd.yml` que construye la imagen, la sube a ECR y actualiza el contenedor en EC2 cuando se hace push a `feat/PB-review3`.
+
+Secretos requeridos en GitHub Actions:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_SESSION_TOKEN`
+- `EC2_HOST`
+- `EC2_USER`
+- `EC2_SSH_KEY`
+- `API_URL` con el endpoint de la API de prediccion. Si no se define, el dashboard usa `http://localhost:8000`.
 
 El dashboard muestra una vista ejecutiva para stakeholders de e-commerce:
 
@@ -87,7 +116,7 @@ Interpretacion rapida:
 - ROC-AUC mide la capacidad general de separar compradores de no compradores.
 - El threshold de negocio puede ser distinto de 0.5 porque depende de costos y beneficios.
 
-Este dashboard no implementa API, AWS ni Docker; es un prototipo ejecutivo local de Sprint 5.
+El simulador del dashboard esta integrado con `POST {API_URL}/predict` y maneja errores de API no disponible, timeouts y respuestas HTTP invalidas.
 
 ## Artefactos principales
 
@@ -114,6 +143,6 @@ El split train/test se hace antes de cualquier `fit` con `train_test_split(..., 
 
 El criterio principal es F1-score. Accuracy, precision, recall y ROC-AUC se reportan como soporte. Si dos modelos tienen F1 similar, se revisan recall, ROC-AUC, estabilidad y facilidad de despliegue futuro.
 
-## Sprint 6 futuro
+## Sprint 6
 
-El Sprint 6 puede usar `models/c_final_model.pkl`, `models/c_preprocessing_pipeline.pkl`, `src/c_predict.py` y `handoff/contracts/` como punto de partida para una API FastAPI. Esta reconstruccion no crea API, Dockerfile, infraestructura AWS ni CI/CD.
+La API FastAPI vive en `api/`, el dashboard consume `POST {API_URL}/predict` desde el simulador y el despliegue del dashboard usa Docker + EC2 mediante GitHub Actions. El endpoint final de API debe configurarse como `API_URL` cuando PB-20 entregue o actualice el servicio desplegado.

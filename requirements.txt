@@ -7,4 +7,5 @@ xgboost
 lightgbm
 plotly
 streamlit
+requests
 pypdf
