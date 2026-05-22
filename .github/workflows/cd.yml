@@ -1,0 +1,40 @@
+name: Deploy MVP
+
+on:
+  push:
+    branches:
+      - feat/PB-review3
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t dp261-g4 .
+
+      - name: Tag Docker image
+        run: |
+          docker tag dp261-g4:latest \
+          009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:latest
+
+      - name: Push Docker image
+        run: |
+          docker push \
+          009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:latest
