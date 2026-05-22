@@ -1,6 +1,6 @@
 # Handoff para Sprint 6
 
-Sprint 6 no esta implementado en esta etapa.
+Sprint 6 ya cuenta con la API PB-19 y la integracion PB-21 del dashboard via REST.
 
 ## Artefactos listos
 
@@ -18,17 +18,14 @@ Sprint 6 no esta implementado en esta etapa.
 
 ## Trabajo futuro
 
-1. Crear API FastAPI con `/health`, `/predict` y `/version`.
-2. Cargar el modelo una sola vez al iniciar el servicio.
-3. Validar entradas con los contratos de `handoff/contracts/`.
-4. Crear Dockerfile y smoke tests locales.
-5. Elegir arquitectura AWS despues de confirmar tamano del modelo, costos y requisitos de latencia.
-6. Agregar secretos fuera del repositorio, logs estructurados, alertas y monitoreo de drift.
+1. Desplegar la API en AWS y entregar el endpoint final para `API_URL`.
+2. Ejecutar smoke tests contra `/health`, `/version` y `/predict`.
+3. Validar el dashboard con el endpoint desplegado.
+4. Agregar secretos fuera del repositorio, logs estructurados, alertas y monitoreo de drift.
 
 ## Fuera de alcance actual
 
-- No se crea carpeta `api/`.
-- No se crea Dockerfile final.
-- No se crea infraestructura AWS.
-- No se configura CI/CD.
+- No se crea infraestructura AWS desde este entregable.
+- No se configuran secretos reales ni credenciales.
+- No se configura CI/CD productivo.
 - No se despliega nada.

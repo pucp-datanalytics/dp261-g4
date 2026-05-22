@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import sys
 
 import pandas as pd
+import requests
 import streamlit as st
 
 
@@ -13,8 +15,6 @@ sys.path.insert(0, str(ROOT / "dashboard"))
 
 from c_business_insights import business_recommendations, classify_intention, executive_summary, performance_status
 from c_dashboard_data import model_feature_importance
-from c_preprocessing import TARGET_COL, add_features, clean_data
-from c_utils import predict_scores
 from c_charts import (
     business_value_chart,
     confusion_matrix_chart,
@@ -29,6 +29,10 @@ from c_data_loader import load_dashboard_bundle, load_dataset, load_model, score
 
 
 st.set_page_config(page_title="Dashboard Ejecutivo - Conversion Online", layout="wide")
+
+
+DEFAULT_API_URL = "http://localhost:8000"
+API_TIMEOUT_SECONDS = 10
 
 
 FIELD_LABELS = {
@@ -54,6 +58,29 @@ FIELD_LABELS = {
 
 def field_label(name: str) -> str:
     return FIELD_LABELS.get(name, name)
+
+
+def get_api_url() -> str:
+    return os.getenv("API_URL", DEFAULT_API_URL).rstrip("/")
+
+
+def predict_with_api(payload: dict) -> dict:
+    api_url = get_api_url()
+    response = requests.post(f"{api_url}/predict", json=payload, timeout=API_TIMEOUT_SECONDS)
+    response.raise_for_status()
+    return response.json()
+
+
+def render_api_status() -> None:
+    api_url = get_api_url()
+    st.caption(f"API configurada: `{api_url}`")
+    try:
+        response = requests.get(f"{api_url}/health", timeout=3)
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        st.warning(f"API no disponible para integracion en vivo: {exc}")
+        return
+    st.success("API disponible: el simulador enviara predicciones por REST.")
 
 
 def render_sidebar(default_threshold: float) -> tuple[str, float, bool]:
@@ -211,9 +238,7 @@ def render_business_value(bundle: dict, threshold: float, show_technical: bool) 
 
 def render_prediction_simulator(model, df: pd.DataFrame, threshold: float) -> None:
     st.header("Simulador interactivo de visitante")
-    if model is None:
-        st.warning("No se encontró modelo final. Ejecuta primero los scripts de entrenamiento/tuning.")
-        return
+    render_api_status()
     numeric_cols = [
         "Administrative",
         "Administrative_Duration",
@@ -258,15 +283,23 @@ def render_prediction_simulator(model, df: pd.DataFrame, threshold: float) -> No
             payload[col_name] = st.selectbox(field_label(col_name), options, key=f"sim_{col_name}")
         payload["Weekend"] = st.checkbox(field_label("Weekend"), key="sim_Weekend")
     if st.button("Calcular probabilidad de compra"):
-        input_df = pd.DataFrame([payload])
-        input_df[TARGET_COL] = 0
-        clean = clean_data(input_df)
-        X_input = add_features(clean.drop(columns=[TARGET_COL]))
-        proba = float(predict_scores(model, X_input)[0])
+        try:
+            result = predict_with_api(payload)
+            proba = float(result["purchase_probability"])
+            api_threshold = float(result.get("threshold", threshold))
+            st.caption(f"Prediccion servida por API REST. Modelo: `{result.get('model_path', 'no informado')}`")
+        except requests.HTTPError as exc:
+            detail = exc.response.text if exc.response is not None else str(exc)
+            st.error(f"La API rechazo el request: {detail}")
+            return
+        except (requests.RequestException, KeyError, ValueError) as exc:
+            st.error(f"No se pudo obtener prediccion desde la API: {exc}")
+            return
         level, action, tone = classify_intention(proba)
         st.progress(min(max(proba, 0.0), 1.0), text=f"Probabilidad de compra: {proba:.1%}")
         st.metric("Nivel de intención", level)
-        st.metric("Decisión", "Activar acción comercial" if proba >= threshold else "No priorizar todavía")
+        st.metric("Decisión", "Activar acción comercial" if proba >= api_threshold else "No priorizar todavía")
+        st.metric("Threshold API", f"{api_threshold:.2f}")
         if tone == "success":
             st.success(action)
         elif tone == "warning":

@@ -47,13 +47,28 @@ Los notebooks son entregables de apoyo por sprint. La logica principal se mantie
 - Sprint 4: `notebooks/c_12_hyperparam_tuning.ipynb`, `notebooks/c_13_ensembles.ipynb`, `notebooks/c_14_final_validation.ipynb`
 - Sprint 5: `notebooks/c_15_business_value.ipynb`, `notebooks/c_16_dashboard_prototype.ipynb`, `notebooks/c_17_findings_report.ipynb`
 
-## Dashboard ejecutivo Sprint 5
+## Dashboard ejecutivo Sprint 5 / Sprint 6
 
 Ejecutar desde la raiz:
 
 ```bash
 streamlit run dashboard/c_app.py
 ```
+
+Para la integracion PB-21 del Sprint 6, el simulador consume la API REST por HTTP:
+
+```bash
+API_URL=http://localhost:8000 streamlit run dashboard/c_app.py
+```
+
+En Windows PowerShell:
+
+```powershell
+$env:API_URL="http://localhost:8000"
+streamlit run dashboard/c_app.py
+```
+
+Si PB-20 despliega la API en AWS, reemplazar `API_URL` por el endpoint entregado.
 
 El dashboard muestra una vista ejecutiva para stakeholders de e-commerce:
 
@@ -87,7 +102,7 @@ Interpretacion rapida:
 - ROC-AUC mide la capacidad general de separar compradores de no compradores.
 - El threshold de negocio puede ser distinto de 0.5 porque depende de costos y beneficios.
 
-Este dashboard no implementa API, AWS ni Docker; es un prototipo ejecutivo local de Sprint 5.
+El simulador del dashboard esta integrado con `POST {API_URL}/predict` y maneja errores de API no disponible, timeouts y respuestas HTTP invalidas.
 
 ## Artefactos principales
 
