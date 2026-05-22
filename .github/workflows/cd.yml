@@ -42,11 +42,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
           AWS_REGION: us-east-1
+          API_URL: ${{ secrets.API_URL }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,AWS_REGION
+          envs: AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,AWS_REGION,API_URL
           script: |
             aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 009030765814.dkr.ecr.us-east-1.amazonaws.com
 
@@ -58,6 +59,7 @@ jobs:
             sudo docker run -d \
               --name dp261-g4 \
               -p 8080:8080 \
+              -e API_URL="${API_URL:-http://localhost:8000}" \
               009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:latest
 
             sudo docker image prune -f

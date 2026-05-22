@@ -1,6 +1,6 @@
 # Handoff para Sprint 6
 
-Sprint 6 ya cuenta con la API PB-19 y la integracion PB-21 del dashboard via REST.
+Sprint 6 ya cuenta con la API PB-19, despliegue MVP PB-20 con Docker + EC2 y la integracion PB-21 del dashboard via REST.
 
 ## Artefactos listos
 
@@ -15,17 +15,19 @@ Sprint 6 ya cuenta con la API PB-19 y la integracion PB-21 del dashboard via RES
 - `handoff/contracts/c_output_schema.json`
 - `handoff/contracts/c_example_request.json`
 - `handoff/contracts/c_example_response.json`
+- `api/` con endpoints `/health`, `/version` y `/predict`
+- `Dockerfile` para publicar el dashboard Streamlit en el puerto `8080`
+- `.github/workflows/cd.yml` para build, push a ECR y deploy en EC2
 
 ## Trabajo futuro
 
-1. Desplegar la API en AWS y entregar el endpoint final para `API_URL`.
+1. Confirmar el endpoint final de la API desplegada y guardarlo como secreto `API_URL`.
 2. Ejecutar smoke tests contra `/health`, `/version` y `/predict`.
-3. Validar el dashboard con el endpoint desplegado.
-4. Agregar secretos fuera del repositorio, logs estructurados, alertas y monitoreo de drift.
+3. Validar el dashboard desplegado en EC2 consumiendo `POST {API_URL}/predict`.
+4. Agregar logs estructurados, alertas y monitoreo de drift.
 
 ## Fuera de alcance actual
 
-- No se crea infraestructura AWS desde este entregable.
 - No se configuran secretos reales ni credenciales.
-- No se configura CI/CD productivo.
-- No se despliega nada.
+- No se publica el valor real de `EC2_HOST`, llaves ni tokens.
+- No se implementa monitoreo productivo en CloudWatch desde este entregable.
