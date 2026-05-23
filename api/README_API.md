@@ -142,6 +142,36 @@ PB-21 debe usar:
 - response compatible con `handoff/contracts/c_output_schema.json`;
 - manejo de errores de red, timeouts y respuestas 4xx/5xx.
 
+## Entrega para Rol 5 - Monitoring
+
+La API emite logs estructurados en formato JSON por `stdout`, listos para ser capturados por Docker/AWS CloudWatch.
+
+Eventos principales:
+
+- `startup`: carga inicial del modelo.
+- `model_load`: carga del archivo `.pkl`.
+- `health`: consulta exitosa a `/health`.
+- `version`: consulta exitosa a `/version`.
+- `predict`: prediccion exitosa en `/predict`.
+- `validation_error`: request invalido capturado por Pydantic.
+- `predict_validation_error`: error 400 durante prediccion.
+- `predict_error`, `version_error`, `startup_error`: errores 500 o fallos inesperados.
+
+Campos utiles para CloudWatch:
+
+- `event`
+- `timestamp`
+- `endpoint`
+- `method`
+- `status_code`
+- `latency_ms`
+- `proba`
+- `prediction`
+- `threshold`
+- `error`
+
+Con estos campos, Rol 5 puede calcular latencia p50/p95/p99, throughput, error rate 5xx y distribucion de probabilidades.
+
 ## Riesgos y supuestos
 
 - El modelo final es un pipeline completo; aplicar el preprocesador aparte duplicaria transformaciones.

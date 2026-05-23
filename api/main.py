@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import json
 import logging
+import time
+from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
@@ -10,7 +13,7 @@ from api.predict import get_model_path, get_preprocessor_path, get_threshold, lo
 from api.schemas import HealthResponse, PredictionResponse, VersionResponse, VisitorFeatures
 
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 LOGGER = logging.getLogger("sprint6_api")
 
 PROJECT_NAME = "Proyecto 2 - Conversion de Visitantes Online"
@@ -23,38 +26,73 @@ app = FastAPI(
 )
 
 
+def log_event(event: str, **fields: Any) -> None:
+    payload = {
+        "event": event,
+        "timestamp": time.time(),
+        **fields,
+    }
+    LOGGER.info(json.dumps(payload, ensure_ascii=False, default=str))
+
+
 @app.on_event("startup")
 def startup_event() -> None:
     try:
         load_model()
-        LOGGER.info("API inicializada correctamente con modelo %s", get_model_path())
-    except Exception:
-        LOGGER.exception("Error cargando el modelo al iniciar la API")
+        log_event(
+            "startup",
+            status_code=200,
+            model_path=get_model_path(),
+            preprocessor_path=get_preprocessor_path(),
+        )
+    except Exception as exc:
+        log_event("startup_error", status_code=500, error=str(exc))
         raise
 
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
-    LOGGER.warning("Input invalido en %s: %s", request.url.path, exc.errors())
+    log_event(
+        "validation_error",
+        endpoint=request.url.path,
+        method=request.method,
+        status_code=400,
+        error_count=len(exc.errors()),
+    )
     return JSONResponse(status_code=400, content={"detail": exc.errors()})
 
 
 @app.get("/health", response_model=HealthResponse)
 def health() -> HealthResponse:
-    LOGGER.info("Consulta /health")
-    return HealthResponse(status="ok", service="sprint6-pb19-api")
+    start = time.perf_counter()
+    response = HealthResponse(status="ok", service="sprint6-pb19-api")
+    log_event(
+        "health",
+        endpoint="/health",
+        method="GET",
+        status_code=200,
+        latency_ms=round((time.perf_counter() - start) * 1000, 3),
+    )
+    return response
 
 
 @app.get("/version", response_model=VersionResponse)
 def version() -> VersionResponse:
-    LOGGER.info("Consulta /version")
+    start = time.perf_counter()
     try:
         model = load_model()
         threshold = get_threshold()
     except Exception as exc:
-        LOGGER.exception("Error obteniendo version de API/modelo")
+        log_event(
+            "version_error",
+            endpoint="/version",
+            method="GET",
+            status_code=500,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            error=str(exc),
+        )
         raise HTTPException(status_code=500, detail=str(exc)) from exc
-    return VersionResponse(
+    response = VersionResponse(
         project=PROJECT_NAME,
         api_version=API_VERSION,
         model_path=get_model_path(),
@@ -62,17 +100,53 @@ def version() -> VersionResponse:
         model_is_pipeline=model_is_pipeline(model),
         threshold=threshold,
     )
+    log_event(
+        "version",
+        endpoint="/version",
+        method="GET",
+        status_code=200,
+        latency_ms=round((time.perf_counter() - start) * 1000, 3),
+        model_path=response.model_path,
+        model_is_pipeline=response.model_is_pipeline,
+        threshold=response.threshold,
+    )
+    return response
 
 
 @app.post("/predict", response_model=PredictionResponse)
 def predict(features: VisitorFeatures) -> PredictionResponse:
-    LOGGER.info("Request /predict recibido")
+    start = time.perf_counter()
     try:
         prediction = predict_purchase(features)
-        return PredictionResponse(**prediction)
+        response = PredictionResponse(**prediction)
+        log_event(
+            "predict",
+            endpoint="/predict",
+            method="POST",
+            status_code=200,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            proba=response.purchase_probability,
+            prediction=response.prediction,
+            threshold=response.threshold,
+        )
+        return response
     except ValueError as exc:
-        LOGGER.warning("Error de validacion en prediccion: %s", exc)
+        log_event(
+            "predict_validation_error",
+            endpoint="/predict",
+            method="POST",
+            status_code=400,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            error=str(exc),
+        )
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
-        LOGGER.exception("Error ejecutando prediccion")
+        log_event(
+            "predict_error",
+            endpoint="/predict",
+            method="POST",
+            status_code=500,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            error=str(exc),
+        )
         raise HTTPException(status_code=500, detail=str(exc)) from exc

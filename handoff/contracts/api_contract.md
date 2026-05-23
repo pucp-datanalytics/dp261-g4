@@ -104,6 +104,34 @@ El valor exacto de `purchase_probability` depende del modelo final y del thresho
 | 400 | JSON invalido, columnas faltantes, tipos invalidos o variables extra no permitidas |
 | 500 | Error cargando modelo, error inesperado de prediccion o configuracion invalida |
 
+## Logs estructurados para monitoring
+
+La API escribe logs JSON por `stdout`. AWS/Docker/CloudWatch puede capturarlos sin cambiar el contrato de respuesta.
+
+Ejemplo de log exitoso de `/predict`:
+
+```json
+{
+  "event": "predict",
+  "timestamp": 1779497501.08,
+  "endpoint": "/predict",
+  "method": "POST",
+  "status_code": 200,
+  "latency_ms": 108.451,
+  "proba": 0.014604109339416027,
+  "prediction": 0,
+  "threshold": 0.5
+}
+```
+
+Campos para Rol 5:
+
+- `latency_ms`: base para p50, p95 y p99.
+- `event`: base para throughput por tipo de evento.
+- `status_code`: base para error rate 4xx/5xx.
+- `proba`: base para distribucion de probabilidades y monitoreo de drift.
+- `prediction`: base para conteo de predicciones positivas/negativas.
+
 ## Entrega para PB-20
 
 PB-20 debe tomar:

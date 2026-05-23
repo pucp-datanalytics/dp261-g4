@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
 import sys
+import time
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -24,6 +26,15 @@ LOGGER = logging.getLogger(__name__)
 DEFAULT_MODEL_PATH = "handoff/model/c_final_model.pkl"
 DEFAULT_PREPROCESSOR_PATH = "handoff/model/c_preprocessing_pipeline.pkl"
 DEFAULT_THRESHOLD = 0.5
+
+
+def log_event(event: str, **fields: Any) -> None:
+    payload = {
+        "event": event,
+        "timestamp": time.time(),
+        **fields,
+    }
+    LOGGER.info(json.dumps(payload, ensure_ascii=False, default=str))
 
 
 def get_model_path() -> str:
@@ -50,7 +61,7 @@ def load_model() -> Any:
     model_path = Path(get_model_path())
     if not model_path.exists():
         raise FileNotFoundError(f"No se encontro el modelo: {model_path}")
-    LOGGER.info("Cargando modelo desde %s", model_path)
+    log_event("model_load", model_path=str(model_path))
     return joblib.load(model_path)
 
 
@@ -61,9 +72,9 @@ def load_preprocessor() -> Any | None:
         return None
     path = Path(preprocessor_path)
     if not path.exists():
-        LOGGER.warning("No se encontro preprocesador opcional: %s", path)
+        log_event("preprocessor_missing", preprocessor_path=str(path))
         return None
-    LOGGER.info("Cargando preprocesador opcional desde %s", path)
+    log_event("preprocessor_load", preprocessor_path=str(path))
     return joblib.load(path)
 
 
