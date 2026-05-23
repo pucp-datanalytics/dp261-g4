@@ -1,6 +1,6 @@
 # Handoff para Sprint 6
 
-Sprint 6 no esta implementado en esta etapa.
+Sprint 6 ya cuenta con la API PB-19, despliegue MVP PB-20 con Docker + EC2 y la integracion PB-21 del dashboard via REST.
 
 ## Artefactos listos
 
@@ -15,20 +15,19 @@ Sprint 6 no esta implementado en esta etapa.
 - `handoff/contracts/c_output_schema.json`
 - `handoff/contracts/c_example_request.json`
 - `handoff/contracts/c_example_response.json`
+- `api/` con endpoints `/health`, `/version` y `/predict`
+- `Dockerfile` para publicar el dashboard Streamlit en el puerto `8080`
+- `.github/workflows/cd.yml` para build, push a ECR y deploy en EC2
 
 ## Trabajo futuro
 
-1. Crear API FastAPI con `/health`, `/predict` y `/version`.
-2. Cargar el modelo una sola vez al iniciar el servicio.
-3. Validar entradas con los contratos de `handoff/contracts/`.
-4. Crear Dockerfile y smoke tests locales.
-5. Elegir arquitectura AWS despues de confirmar tamano del modelo, costos y requisitos de latencia.
-6. Agregar secretos fuera del repositorio, logs estructurados, alertas y monitoreo de drift.
+1. Confirmar el endpoint final de la API desplegada y guardarlo como secreto `API_URL`.
+2. Ejecutar smoke tests contra `/health`, `/version` y `/predict`.
+3. Validar el dashboard desplegado en EC2 consumiendo `POST {API_URL}/predict`.
+4. Agregar logs estructurados, alertas y monitoreo de drift.
 
 ## Fuera de alcance actual
 
-- No se crea carpeta `api/`.
-- No se crea Dockerfile final.
-- No se crea infraestructura AWS.
-- No se configura CI/CD.
-- No se despliega nada.
+- No se configuran secretos reales ni credenciales.
+- No se publica el valor real de `EC2_HOST`, llaves ni tokens.
+- No se implementa monitoreo productivo en CloudWatch desde este entregable.

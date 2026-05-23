@@ -1,0 +1,43 @@
+﻿{
+  "widgets": [
+    {
+      "type": "metric",
+      "properties": {
+        "metrics": [
+          [ "AWS/EC2", "CPUUtilization", { "stat": "Average" } ]
+        ],
+        "title": "CPU de la EC2 (%)",
+        "period": 300,
+        "region": "us-east-1"
+      }
+    },
+    {
+      "type": "metric",
+      "properties": {
+        "metrics": [
+          [ "AWS/EC2", "NetworkIn" ],
+          [ "AWS/EC2", "NetworkOut" ]
+        ],
+        "title": "Tráfico de red (Bytes)",
+        "period": 300
+      }
+    },
+    {
+      "type": "metric",
+      "properties": {
+        "metrics": [
+          [ "CWAgent", "mem_used_percent", { "stat": "Average" } ]
+        ],
+        "title": "Memoria usada (%)",
+        "period": 300
+      }
+    },
+    {
+      "type": "alarm",
+      "properties": {
+        "alarms": [ "EC2-CPU-High" ],
+        "title": "Alarma de CPU > 80%"
+      }
+    }
+  ]
+}

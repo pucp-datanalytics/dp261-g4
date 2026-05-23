@@ -65,8 +65,8 @@ NOTEBOOKS = [
         code("import pandas as pd\npd.read_csv('models/c_threshold_analysis.csv').sort_values('expected_value', ascending=False).head()")
     ]),
     ("c_16_dashboard_prototype.ipynb", "Sprint 5 - Dashboard Prototype", "Explica dashboard local y comando Streamlit.", [
-        code("from pathlib import Path\nprint(Path('dashboard/c_app.py').read_text(encoding='utf-8')[:1200])"),
-        md("Ejecutar desde la raiz: `streamlit run dashboard/c_app.py`. Es prototipo local, no despliegue AWS.")
+        code("from pathlib import Path\nprint(Path('dashboard/c_app.ipynb').read_text(encoding='utf-8')[:1200])"),
+        md("Ejecutar desde la raiz: `streamlit run dashboard/c_app.ipynb`. Es prototipo local, no despliegue AWS.")
     ]),
     ("c_17_findings_report.ipynb", "Sprint 5 - Findings Report", "Resume hallazgos, recomendaciones, reportes y handoff de Sprint 6.", [
         code("from pathlib import Path\nfor p in ['reports/c_recommendations.md','reports/c_business_value_summary.md','reports/c_model_validation_report.md','handoff/c_notes_for_sprint6.md']:\n    print('\\n---', p, '---')\n    print(Path(p).read_text(encoding='utf-8')[:1000])")

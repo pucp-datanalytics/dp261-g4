@@ -1,0 +1,62 @@
+{
+  "Administrative": {
+    "min": 0,
+    "max": 10,
+    "mean": 2.5,
+    "std": 2.0
+  },
+  "Administrative_Duration": {
+    "min": 0,
+    "max": 500,
+    "mean": 80,
+    "std": 100
+  },
+  "Informational": {
+    "min": 0,
+    "max": 5,
+    "mean": 0.5,
+    "std": 1.0
+  },
+  "Informational_Duration": {
+    "min": 0,
+    "max": 300,
+    "mean": 20,
+    "std": 50
+  },
+  "ProductRelated": {
+    "min": 0,
+    "max": 50,
+    "mean": 15,
+    "std": 10
+  },
+  "ProductRelated_Duration": {
+    "min": 0,
+    "max": 2000,
+    "mean": 500,
+    "std": 400
+  },
+  "BounceRates": {
+    "min": 0,
+    "max": 0.8,
+    "mean": 0.3,
+    "std": 0.2
+  },
+  "ExitRates": {
+    "min": 0,
+    "max": 0.8,
+    "mean": 0.2,
+    "std": 0.15
+  },
+  "PageValues": {
+    "min": 0,
+    "max": 20,
+    "mean": 2,
+    "std": 3
+  },
+  "SpecialDay": {
+    "min": 0,
+    "max": 1,
+    "mean": 0.05,
+    "std": 0.1
+  }
+}
