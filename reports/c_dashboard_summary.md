@@ -1,33 +1,34 @@
-# Dashboard Ejecutivo Sprint 5
+# Dashboard ejecutivo Sprint 5
 
-El dashboard ejecutivo convierte los resultados del modelo de conversion online en una vista orientada a negocio.
+El dashboard fue reforzado para responder la observacion del profesor: ahora muestra valor de negocio en USD, no solo metricas tecnicas.
 
-## Objetivo
+## Secciones principales
 
-Comunicar a stakeholders no tecnicos:
+- Resumen ejecutivo con modelo recomendado, valor estimado, ROI, threshold economico y costos de FP/FN.
+- Carga de nuevo dataset con validacion de estructura.
+- Ranking economico de modelos.
+- Impacto economico del tuning: XGBoost tuneado vs inicial, LightGBM tuneado vs inicial y Random Forest tuneado vs baseline.
+- Desempeno tecnico vs valor economico para Accuracy, Precision, Recall, F1-score y ROC-AUC.
+- Profit curve con selector interno para analizar todas las curvas o un modelo especifico, incluyendo baseline, iniciales y tuneados.
+- Simulador economico de visitante.
+- Segmentos y senales de negocio.
+- Recomendaciones ejecutivas.
+- Sprint 6 readiness.
 
-- Que problema resuelve el modelo.
-- Que tan bien identifica visitantes con intencion de compra.
-- Cual es el valor esperado bajo supuestos de costo-beneficio.
-- Que threshold conviene usar para acciones comerciales.
-- Que segmentos y variables explican mejor la conversion.
-- Que artefactos quedan listos para Sprint 6.
+## Archivos economicos generados
 
-## Secciones
+- `models/c_model_economic_comparison.csv`
+- `models/c_profit_curve_by_model.csv`
+- `models/c_baseline_comparison_usd.csv`
 
-1. Portada ejecutiva y KPIs principales.
-2. Resumen interpretativo.
-3. Desempeno del modelo.
-4. Valor de negocio por threshold.
-5. Simulador interactivo de visitante.
-6. Segmentos y variables relevantes.
-7. Recomendaciones accionables.
-8. Handoff para Sprint 6.
+## Lectura ejecutiva
 
-## Comando
+El dashboard permite explicar que el modelo recomendado puede variar segun los supuestos economicos y el threshold. Tambien permite evaluar si el tuning agrego o redujo valor frente a la version inicial/baseline de cada familia de modelo.
 
-```bash
-streamlit run dashboard/c_app.ipynb
-```
+Los montos son estimaciones configurables desde la barra lateral del dashboard.
 
-Este dashboard es un prototipo local de Sprint 5. No implementa API, Docker ni AWS.
+## Dataset cargado por usuario
+
+El dashboard ahora puede recibir un CSV/XLSX desde la interfaz. Si el archivo contiene `Revenue`, se recalculan metricas reales, matriz de confusion y valor economico. Si no contiene `Revenue`, se muestran predicciones, niveles de intencion y valor potencial estimado sin reportar metricas reales.
+
+El dataset original `docs/dataset_pucp.csv` se mantiene como fallback reproducible.

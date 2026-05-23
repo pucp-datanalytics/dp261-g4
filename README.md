@@ -118,6 +118,104 @@ Interpretacion rapida:
 
 El simulador del dashboard esta integrado con `POST {API_URL}/predict` y maneja errores de API no disponible, timeouts y respuestas HTTP invalidas.
 
+## Dashboard ejecutivo y valor de negocio
+
+El dashboard fue reforzado para mostrar valor economico, no solo metricas tecnicas. Se ejecuta con:
+
+```bash
+streamlit run dashboard/c_app.py
+```
+
+Secciones principales:
+
+- Resumen ejecutivo con modelo recomendado dinamico segun mayor valor economico.
+- Ranking economico de modelos en USD.
+- Impacto economico del tuning: tuneado vs inicial/baseline.
+- Desempeno tecnico vs valor economico para Accuracy, Precision, Recall, F1-score y ROC-AUC.
+- Profit curve con selector interno para ver todas las curvas o un modelo especifico, incluyendo baseline, iniciales y tuneados.
+- Simulador economico con supuestos editables.
+- Segmentos y senales de negocio.
+- Recomendaciones ejecutivas.
+- Compatibilidad Sprint 6.
+
+Supuestos configurables desde la barra lateral:
+
+- Ingreso promedio por compra.
+- Margen bruto.
+- Costo de incentivo/descuento.
+- Costo de contacto o chat.
+- Uplift esperado por intervencion.
+- Costo de oportunidad de falso negativo.
+- Valor/costo de true negative.
+- Threshold de decision.
+
+Interpretacion:
+
+- `Valor esperado USD` estima ganancia o perdida neta con la matriz costo-beneficio.
+- `Ganancia incremental vs baseline` muestra cuanto mejora XGBoost frente a modelos o escenarios de referencia.
+- `ROI %` compara el valor neto contra el costo de intervenir visitantes.
+- Los montos son estimaciones bajo supuestos configurables porque el dataset no contiene monto real de compra.
+
+Archivos economicos usados:
+
+- `models/c_model_economic_comparison.csv`
+- `models/c_profit_curve_by_model.csv`
+- `models/c_baseline_comparison_usd.csv`
+
+Esta mejora corresponde al Sprint 5 y mantiene compatibilidad con Sprint 6. No cambia el modelo final, no reentrena modelos, no cambia la API y no modifica Docker.
+
+## Uso de dataset cargado por usuario en el dashboard
+
+Ejecutar:
+
+```bash
+streamlit run dashboard/c_app.py
+```
+
+En la barra lateral se puede elegir:
+
+- `Dataset original`: usa `docs/dataset_pucp.csv` como demo reproducible.
+- `Dataset cargado por usuario`: permite subir un archivo CSV o XLSX desde el dashboard.
+
+Columnas requeridas:
+
+- `Administrative`
+- `Administrative_Duration`
+- `Informational`
+- `Informational_Duration`
+- `ProductRelated`
+- `ProductRelated_Duration`
+- `BounceRates`
+- `ExitRates`
+- `PageValues`
+- `SpecialDay`
+- `Month`
+- `OperatingSystems`
+- `Browser`
+- `Region`
+- `TrafficType`
+- `VisitorType`
+- `Weekend`
+
+Columna opcional:
+
+- `Revenue`
+
+Si el dataset contiene `Revenue`, el dashboard puede calcular metricas reales, matriz de confusion, valor economico, ROI y comparacion de modelos sobre el archivo cargado.
+
+Si el dataset no contiene `Revenue`, el dashboard no calcula F1, recall, precision, ROC-AUC ni matriz de confusion real. En ese caso muestra predicciones, probabilidades, nivel de intencion, acciones sugeridas y valor potencial estimado bajo supuestos configurables.
+
+El modelo no se reentrena desde el dashboard. La carga dinamica usa el modelo final `models/c_final_model.pkl` y los modelos existentes para scoring/comparacion. Las predicciones pueden descargarse desde la interfaz como `c_uploaded_predictions.csv`.
+
+Archivos locales generados cuando se carga un dataset valido:
+
+- `data/processed/c_uploaded_dataset_validated.csv`
+- `data/processed/c_uploaded_predictions.csv`
+- `models/c_uploaded_dataset_business_value.csv`, si aplica
+- `models/c_uploaded_dataset_economic_comparison.csv`, si aplica
+
+La carpeta `data/user_uploads/` queda preparada para cargas locales, pero los archivos de usuario no se versionan. No subir datos sensibles.
+
 ## Artefactos principales
 
 - `models/c_baseline_*.pkl`
@@ -130,6 +228,9 @@ El simulador del dashboard esta integrado con `POST {API_URL}/predict` y maneja 
 - `models/c_experiments_log.csv`
 - `models/c_validation_test_comparison.csv`
 - `models/c_threshold_analysis.csv`
+- `models/c_model_economic_comparison.csv`
+- `models/c_profit_curve_by_model.csv`
+- `models/c_baseline_comparison_usd.csv`
 - `reports/c_model_validation_report.md`
 - `reports/c_business_value_summary.md`
 - `reports/c_recommendations.md`
