@@ -2,7 +2,7 @@
 
 Esta carpeta implementa PB-19 del Sprint 6: empaquetar el modelo final como una API REST con FastAPI y Docker.
 
-La rama de trabajo es `feat/PB-19-api`, creada desde `feat/PB-review3`, que funciona como base limpia del proyecto hasta Sprint 5.
+PB-19 fue desarrollado inicialmente en `feat/PB-19-api` y ahora queda integrado/reforzado en `feat/PB-review3`, que funciona como base limpia del equipo para Sprint 6.
 
 ## Alineacion con Sprint 6
 
@@ -45,6 +45,20 @@ Nota tecnica: `c_final_model.pkl` ya es un pipeline completo con preprocesador i
 | `MODEL_PATH` | `handoff/model/c_final_model.pkl` | Ruta del modelo final |
 | `PREPROCESSOR_PATH` | `handoff/model/c_preprocessing_pipeline.pkl` | Ruta informativa/opcional del preprocesador |
 | `THRESHOLD` | `0.5` | Umbral para convertir probabilidad en clase |
+| `MODEL_VERSION` | `c_final_model` | Version legible del modelo para `/version`, `/predict` y logs |
+
+## Equivalencias con el PDF Sprint 6
+
+El PDF nombra artefactos sin prefijo, pero este repositorio conserva el prefijo `c_` de la reconstruccion limpia:
+
+| PDF Sprint 6 | Repo actual |
+|---|---|
+| `handoff/model/final_model.pkl` | `handoff/model/c_final_model.pkl` |
+| `handoff/model/preproc_pipeline.pkl` | `handoff/model/c_preprocessing_pipeline.pkl` |
+| `handoff/contracts/input_schema.json` | `handoff/contracts/c_input_schema.json` |
+| `handoff/contracts/output_schema.json` | `handoff/contracts/c_output_schema.json` |
+| `handoff/contracts/example_request.json` | `handoff/contracts/c_example_request.json` |
+| `dashboard/app.py` | `dashboard/c_app.py` |
 
 ## Ejecucion local en Windows PowerShell
 
@@ -63,7 +77,7 @@ python -m uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
 Probar `/health`:
 
 ```powershell
-curl http://localhost:8000/health
+curl.exe http://localhost:8000/health
 ```
 
 Resultado esperado:
@@ -75,13 +89,13 @@ Resultado esperado:
 Probar `/version`:
 
 ```powershell
-curl http://localhost:8000/version
+curl.exe http://localhost:8000/version
 ```
 
 Probar `/predict`:
 
 ```powershell
-curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+curl.exe -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
 ```
 
 Resultado esperado:
@@ -91,11 +105,21 @@ Resultado esperado:
   "purchase_probability": 0.0,
   "prediction": 0,
   "threshold": 0.5,
-  "model_path": "handoff/model/c_final_model.pkl"
+  "model_path": "handoff/model/c_final_model.pkl",
+  "model_version": "c_final_model",
+  "model_sha": "8f55f14ec7b1"
 }
 ```
 
 El valor exacto de `purchase_probability` puede variar si cambia el modelo o el threshold.
+
+Smoke test automatizado:
+
+```powershell
+python api/smoke_test.py
+```
+
+El smoke test valida `/health`, `/version` y `/predict` usando el contrato real de `handoff/contracts/c_example_request.json`.
 
 ## Docker
 
@@ -114,9 +138,9 @@ docker run --rm -p 8000:8000 sprint6-api
 Probar contenedor:
 
 ```powershell
-curl http://localhost:8000/health
-curl http://localhost:8000/version
-curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+curl.exe http://localhost:8000/health
+curl.exe http://localhost:8000/version
+curl.exe -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
 ```
 
 ## Entrega para PB-20 AWS
@@ -149,6 +173,8 @@ La API emite logs estructurados en formato JSON por `stdout`, listos para ser ca
 Eventos principales:
 
 - `startup`: carga inicial del modelo.
+- `request`: request HTTP recibida, para throughput y error rate.
+- `request_error`: error no controlado durante un request.
 - `model_load`: carga del archivo `.pkl`.
 - `health`: consulta exitosa a `/health`.
 - `version`: consulta exitosa a `/version`.
@@ -169,6 +195,11 @@ Campos utiles para CloudWatch:
 - `prediction`
 - `threshold`
 - `error`
+- `request_id`
+- `client_ip`
+- `user_agent`
+- `model_version`
+- `model_sha`
 
 Con estos campos, Rol 5 puede calcular latencia p50/p95/p99, throughput, error rate 5xx y distribucion de probabilidades.
 

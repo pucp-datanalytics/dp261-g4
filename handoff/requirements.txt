@@ -1,0 +1,12 @@
+# Requerimientos minimos para consumir los artefactos de handoff del Sprint 6.
+# La API usa api/requirements.txt como fuente operativa para Docker.
+fastapi
+uvicorn[standard]
+pydantic
+numpy
+pandas
+scikit-learn
+imbalanced-learn
+joblib
+xgboost
+lightgbm

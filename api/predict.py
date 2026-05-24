@@ -6,6 +6,7 @@ import os
 import sys
 import time
 from functools import lru_cache
+import hashlib
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +27,7 @@ LOGGER = logging.getLogger(__name__)
 DEFAULT_MODEL_PATH = "handoff/model/c_final_model.pkl"
 DEFAULT_PREPROCESSOR_PATH = "handoff/model/c_preprocessing_pipeline.pkl"
 DEFAULT_THRESHOLD = 0.5
+DEFAULT_MODEL_VERSION = "c_final_model"
 
 
 def log_event(event: str, **fields: Any) -> None:
@@ -54,6 +56,22 @@ def get_threshold() -> float:
     if not 0 <= threshold <= 1:
         raise ValueError(f"THRESHOLD debe estar entre 0 y 1, recibido: {threshold}")
     return threshold
+
+
+def get_model_version() -> str:
+    return os.getenv("MODEL_VERSION", DEFAULT_MODEL_VERSION)
+
+
+@lru_cache(maxsize=1)
+def get_model_sha() -> str:
+    model_path = Path(get_model_path())
+    if not model_path.exists():
+        raise FileNotFoundError(f"No se encontro el modelo: {model_path}")
+    digest = hashlib.sha256()
+    with model_path.open("rb") as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()[:12]
 
 
 @lru_cache(maxsize=1)
@@ -110,4 +128,6 @@ def predict_purchase(features: VisitorFeatures) -> dict:
         "prediction": prediction,
         "threshold": threshold,
         "model_path": get_model_path(),
+        "model_version": get_model_version(),
+        "model_sha": get_model_sha(),
     }

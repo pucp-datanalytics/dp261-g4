@@ -19,7 +19,7 @@ En AWS, PB-20 debera reemplazar este valor por el endpoint publico/privado despl
 Verifica que la API esta viva.
 
 ```powershell
-curl http://localhost:8000/health
+curl.exe http://localhost:8000/health
 ```
 
 Respuesta esperada:
@@ -36,7 +36,7 @@ Respuesta esperada:
 Devuelve informacion de version, modelo y threshold.
 
 ```powershell
-curl http://localhost:8000/version
+curl.exe http://localhost:8000/version
 ```
 
 Respuesta esperada:
@@ -45,6 +45,8 @@ Respuesta esperada:
 {
   "project": "Proyecto 2 - Conversion de Visitantes Online",
   "api_version": "1.0.0-pb19",
+  "model_version": "c_final_model",
+  "model_sha": "abc123def456",
   "model_path": "handoff/model/c_final_model.pkl",
   "preprocessor_path": "handoff/model/c_preprocessing_pipeline.pkl",
   "model_is_pipeline": true,
@@ -57,7 +59,7 @@ Respuesta esperada:
 Recibe las variables de una sesion online y devuelve probabilidad de compra y clase predicha.
 
 ```powershell
-curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+curl.exe -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
 ```
 
 Request esperado:
@@ -91,7 +93,9 @@ Response esperado:
   "purchase_probability": 0.12,
   "prediction": 0,
   "threshold": 0.5,
-  "model_path": "handoff/model/c_final_model.pkl"
+  "model_path": "handoff/model/c_final_model.pkl",
+  "model_version": "c_final_model",
+  "model_sha": "abc123def456"
 }
 ```
 
@@ -120,7 +124,9 @@ Ejemplo de log exitoso de `/predict`:
   "latency_ms": 108.451,
   "proba": 0.014604109339416027,
   "prediction": 0,
-  "threshold": 0.5
+  "threshold": 0.5,
+  "model_version": "c_final_model",
+  "model_sha": "abc123def456"
 }
 ```
 
@@ -131,6 +137,11 @@ Campos para Rol 5:
 - `status_code`: base para error rate 4xx/5xx.
 - `proba`: base para distribucion de probabilidades y monitoreo de drift.
 - `prediction`: base para conteo de predicciones positivas/negativas.
+- `request_id`: trazabilidad de una llamada especifica.
+- `model_version` y `model_sha`: versionado para debugging y rollback.
+
+La API tambien emite eventos `request` por cada endpoint. Rol 5 puede calcular throughput contando logs con
+`event="request"` agrupados por minuto y filtrar error rate con `status_code >= 500`.
 
 ## Entrega para PB-20
 

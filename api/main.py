@@ -3,13 +3,23 @@ from __future__ import annotations
 import json
 import logging
 import time
+import uuid
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from api.predict import get_model_path, get_preprocessor_path, get_threshold, load_model, model_is_pipeline, predict_purchase
+from api.predict import (
+    get_model_path,
+    get_model_sha,
+    get_model_version,
+    get_preprocessor_path,
+    get_threshold,
+    load_model,
+    model_is_pipeline,
+    predict_purchase,
+)
 from api.schemas import HealthResponse, PredictionResponse, VersionResponse, VisitorFeatures
 
 
@@ -30,9 +40,45 @@ def log_event(event: str, **fields: Any) -> None:
     payload = {
         "event": event,
         "timestamp": time.time(),
+        "api_version": API_VERSION,
         **fields,
     }
     LOGGER.info(json.dumps(payload, ensure_ascii=False, default=str))
+
+
+@app.middleware("http")
+async def request_logging_middleware(request: Request, call_next):
+    request_id = str(uuid.uuid4())
+    start = time.perf_counter()
+    try:
+        response = await call_next(request)
+    except Exception as exc:
+        log_event(
+            "request_error",
+            request_id=request_id,
+            endpoint=request.url.path,
+            method=request.method,
+            status_code=500,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            client_ip=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
+            error=str(exc),
+        )
+        raise
+
+    latency_ms = round((time.perf_counter() - start) * 1000, 3)
+    response.headers["X-Request-ID"] = request_id
+    log_event(
+        "request",
+        request_id=request_id,
+        endpoint=request.url.path,
+        method=request.method,
+        status_code=response.status_code,
+        latency_ms=latency_ms,
+        client_ip=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
+    )
+    return response
 
 
 @app.on_event("startup")
@@ -43,6 +89,8 @@ def startup_event() -> None:
             "startup",
             status_code=200,
             model_path=get_model_path(),
+            model_version=get_model_version(),
+            model_sha=get_model_sha(),
             preprocessor_path=get_preprocessor_path(),
         )
     except Exception as exc:
@@ -82,6 +130,7 @@ def version() -> VersionResponse:
     try:
         model = load_model()
         threshold = get_threshold()
+        model_sha = get_model_sha()
     except Exception as exc:
         log_event(
             "version_error",
@@ -95,6 +144,8 @@ def version() -> VersionResponse:
     response = VersionResponse(
         project=PROJECT_NAME,
         api_version=API_VERSION,
+        model_version=get_model_version(),
+        model_sha=model_sha,
         model_path=get_model_path(),
         preprocessor_path=get_preprocessor_path(),
         model_is_pipeline=model_is_pipeline(model),
@@ -107,6 +158,8 @@ def version() -> VersionResponse:
         status_code=200,
         latency_ms=round((time.perf_counter() - start) * 1000, 3),
         model_path=response.model_path,
+        model_version=response.model_version,
+        model_sha=response.model_sha,
         model_is_pipeline=response.model_is_pipeline,
         threshold=response.threshold,
     )
@@ -128,6 +181,8 @@ def predict(features: VisitorFeatures) -> PredictionResponse:
             proba=response.purchase_probability,
             prediction=response.prediction,
             threshold=response.threshold,
+            model_version=response.model_version,
+            model_sha=response.model_sha,
         )
         return response
     except ValueError as exc:

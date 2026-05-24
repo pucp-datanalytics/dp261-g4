@@ -4,12 +4,16 @@
     "purchase_probability",
     "prediction",
     "threshold",
-    "model_path"
+    "model_path",
+    "model_version",
+    "model_sha"
   ],
   "properties": {
     "purchase_probability": {"type": "number"},
     "prediction": {"type": "integer", "enum": [0, 1]},
     "threshold": {"type": "number"},
-    "model_path": {"type": "string"}
+    "model_path": {"type": "string"},
+    "model_version": {"type": "string"},
+    "model_sha": {"type": "string"}
   }
 }
