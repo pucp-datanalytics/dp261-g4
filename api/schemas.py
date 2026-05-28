@@ -33,6 +33,8 @@ class HealthResponse(BaseModel):
 class VersionResponse(BaseModel):
     project: str
     api_version: str
+    model_version: str
+    model_sha: str
     model_path: str
     preprocessor_path: str | None
     model_is_pipeline: bool
@@ -44,3 +46,18 @@ class PredictionResponse(BaseModel):
     prediction: int
     threshold: float
     model_path: str
+    model_version: str
+    model_sha: str
+
+
+class BatchPredictionRequest(BaseModel):
+    records: list[VisitorFeatures] = Field(..., min_length=1, max_length=500)
+
+
+class BatchPredictionItem(PredictionResponse):
+    row_id: int
+
+
+class BatchPredictionResponse(BaseModel):
+    records: list[BatchPredictionItem]
+    count: int

@@ -1,0 +1,68 @@
+name: Deploy Sprint 6 API
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build API Docker image
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REPOSITORY_API: ${{ secrets.ECR_REPOSITORY_API }}
+        run: |
+          docker build -t sprint6-api -f api/Dockerfile .
+          docker tag sprint6-api:latest ${ECR_REGISTRY}/${ECR_REPOSITORY_API}:${GITHUB_SHA}
+          docker tag sprint6-api:latest ${ECR_REGISTRY}/${ECR_REPOSITORY_API}:latest
+
+      - name: Push API Docker image
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REPOSITORY_API: ${{ secrets.ECR_REPOSITORY_API }}
+        run: |
+          docker push ${ECR_REGISTRY}/${ECR_REPOSITORY_API}:${GITHUB_SHA}
+          docker push ${ECR_REGISTRY}/${ECR_REPOSITORY_API}:latest
+
+      - name: Deploy API on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REPOSITORY_API: ${{ secrets.ECR_REPOSITORY_API }}
+          API_KEY: ${{ secrets.API_KEY }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: AWS_REGION,ECR_REGISTRY,ECR_REPOSITORY_API,API_KEY
+          script: |
+            aws ecr get-login-password --region "$AWS_REGION" | sudo docker login --username AWS --password-stdin "$ECR_REGISTRY"
+            sudo docker pull "$ECR_REGISTRY/$ECR_REPOSITORY_API:latest"
+            sudo docker stop sprint6-api || true
+            sudo docker rm sprint6-api || true
+            sudo docker run -d \
+              --name sprint6-api \
+              -p 8000:8000 \
+              -e MODEL_PATH="handoff/model/c_final_model.pkl" \
+              -e PREPROCESSOR_PATH="handoff/model/c_preprocessing_pipeline.pkl" \
+              -e THRESHOLD="0.5" \
+              -e MODEL_VERSION="c_final_model" \
+              -e API_KEY="$API_KEY" \
+              "$ECR_REGISTRY/$ECR_REPOSITORY_API:latest"
+            sudo docker image prune -f

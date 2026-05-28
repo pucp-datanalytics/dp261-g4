@@ -2,7 +2,7 @@
 
 Esta carpeta implementa PB-19 del Sprint 6: empaquetar el modelo final como una API REST con FastAPI y Docker.
 
-La rama de trabajo es `feat/PB-19-api`, creada desde `feat/PB-review3`, que funciona como base limpia del proyecto hasta Sprint 5.
+PB-19 fue desarrollado inicialmente en `feat/PB-19-api` y ahora queda integrado/reforzado en `feat/PB-review3`, que funciona como base limpia del equipo para Sprint 6.
 
 ## Alineacion con Sprint 6
 
@@ -16,6 +16,7 @@ El PDF de Sprint 6 pide que PB-19 entregue:
 - pruebas locales con `docker build`, `docker run` y `curl`.
 
 Esta implementacion usa el modelo final real de Sprint 4/5 y los contratos de `handoff/contracts/`.
+Adicionalmente incluye `/predict_batch` para que el dashboard del Rol 4 pueda validar datasets cargados por usuario contra la API desplegada.
 
 ## Estructura
 
@@ -45,6 +46,21 @@ Nota tecnica: `c_final_model.pkl` ya es un pipeline completo con preprocesador i
 | `MODEL_PATH` | `handoff/model/c_final_model.pkl` | Ruta del modelo final |
 | `PREPROCESSOR_PATH` | `handoff/model/c_preprocessing_pipeline.pkl` | Ruta informativa/opcional del preprocesador |
 | `THRESHOLD` | `0.5` | Umbral para convertir probabilidad en clase |
+| `MODEL_VERSION` | `c_final_model` | Version legible del modelo para `/version`, `/predict` y logs |
+| `API_KEY` | vacio | Si se define, `/predict` y `/predict_batch` exigen header `x-api-key` |
+
+## Equivalencias con el PDF Sprint 6
+
+El PDF nombra artefactos sin prefijo, pero este repositorio conserva el prefijo `c_` de la reconstruccion limpia:
+
+| PDF Sprint 6 | Repo actual |
+|---|---|
+| `handoff/model/final_model.pkl` | `handoff/model/c_final_model.pkl` |
+| `handoff/model/preproc_pipeline.pkl` | `handoff/model/c_preprocessing_pipeline.pkl` |
+| `handoff/contracts/input_schema.json` | `handoff/contracts/c_input_schema.json` |
+| `handoff/contracts/output_schema.json` | `handoff/contracts/c_output_schema.json` |
+| `handoff/contracts/example_request.json` | `handoff/contracts/c_example_request.json` |
+| `dashboard/app.py` | `dashboard/c_app.py` |
 
 ## Ejecucion local en Windows PowerShell
 
@@ -63,7 +79,7 @@ python -m uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
 Probar `/health`:
 
 ```powershell
-curl http://localhost:8000/health
+curl.exe http://localhost:8000/health
 ```
 
 Resultado esperado:
@@ -75,13 +91,25 @@ Resultado esperado:
 Probar `/version`:
 
 ```powershell
-curl http://localhost:8000/version
+curl.exe http://localhost:8000/version
 ```
 
 Probar `/predict`:
 
 ```powershell
-curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+curl.exe -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+```
+
+Probar `/predict_batch`:
+
+```powershell
+curl.exe -X POST "http://localhost:8000/predict_batch" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_batch_request.json"
+```
+
+Si PB-20 habilita `API_KEY`, agregar el header `x-api-key`:
+
+```powershell
+curl.exe -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" -H "x-api-key: <API_KEY>" --data-binary "@handoff/contracts/c_example_request.json"
 ```
 
 Resultado esperado:
@@ -91,11 +119,21 @@ Resultado esperado:
   "purchase_probability": 0.0,
   "prediction": 0,
   "threshold": 0.5,
-  "model_path": "handoff/model/c_final_model.pkl"
+  "model_path": "handoff/model/c_final_model.pkl",
+  "model_version": "c_final_model",
+  "model_sha": "8f55f14ec7b1"
 }
 ```
 
 El valor exacto de `purchase_probability` puede variar si cambia el modelo o el threshold.
+
+Smoke test automatizado:
+
+```powershell
+python api/smoke_test.py
+```
+
+El smoke test valida `/health`, `/version`, `/predict` y `/predict_batch` usando los contratos reales de `handoff/contracts/`.
 
 ## Docker
 
@@ -114,9 +152,10 @@ docker run --rm -p 8000:8000 sprint6-api
 Probar contenedor:
 
 ```powershell
-curl http://localhost:8000/health
-curl http://localhost:8000/version
-curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+curl.exe http://localhost:8000/health
+curl.exe http://localhost:8000/version
+curl.exe -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+curl.exe -X POST "http://localhost:8000/predict_batch" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_batch_request.json"
 ```
 
 ## Entrega para PB-20 AWS
@@ -128,7 +167,8 @@ PB-20 debe tomar:
 - codigo `api/`;
 - artefactos `handoff/model/`;
 - contratos `handoff/contracts/`;
-- variables `MODEL_PATH`, `PREPROCESSOR_PATH`, `THRESHOLD`;
+- variables `MODEL_PATH`, `PREPROCESSOR_PATH`, `THRESHOLD`, `MODEL_VERSION`;
+- variable opcional `API_KEY` si la API se expone publicamente;
 - endpoint `/health` para health checks de AWS.
 
 Para AWS, se recomienda mantener secretos fuera del repo y definir variables sensibles en AWS Secrets Manager, Parameter Store o GitHub Secrets.
@@ -138,7 +178,9 @@ Para AWS, se recomienda mantener secretos fuera del repo y definir variables sen
 PB-21 debe usar:
 
 - URL base de la API via variable `API_URL`;
+- API key via variable `API_KEY` si PB-20 protege el endpoint;
 - `POST /predict` con payload compatible con `handoff/contracts/c_example_request.json`;
+- `POST /predict_batch` con payload compatible con `handoff/contracts/c_example_batch_request.json`;
 - response compatible con `handoff/contracts/c_output_schema.json`;
 - manejo de errores de red, timeouts y respuestas 4xx/5xx.
 
@@ -149,6 +191,8 @@ La API emite logs estructurados en formato JSON por `stdout`, listos para ser ca
 Eventos principales:
 
 - `startup`: carga inicial del modelo.
+- `request`: request HTTP recibida, para throughput y error rate.
+- `request_error`: error no controlado durante un request.
 - `model_load`: carga del archivo `.pkl`.
 - `health`: consulta exitosa a `/health`.
 - `version`: consulta exitosa a `/version`.
@@ -169,6 +213,11 @@ Campos utiles para CloudWatch:
 - `prediction`
 - `threshold`
 - `error`
+- `request_id`
+- `client_ip`
+- `user_agent`
+- `model_version`
+- `model_sha`
 
 Con estos campos, Rol 5 puede calcular latencia p50/p95/p99, throughput, error rate 5xx y distribucion de probabilidades.
 

@@ -2,5 +2,7 @@
   "purchase_probability": 0.12,
   "prediction": 0,
   "threshold": 0.5,
-  "model_path": "models/c_final_model.pkl"
+  "model_path": "handoff/model/c_final_model.pkl",
+  "model_version": "c_final_model",
+  "model_sha": "example_sha"
 }

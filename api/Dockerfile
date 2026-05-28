@@ -4,7 +4,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     MODEL_PATH=handoff/model/c_final_model.pkl \
     PREPROCESSOR_PATH=handoff/model/c_preprocessing_pipeline.pkl \
-    THRESHOLD=0.5
+    THRESHOLD=0.5 \
+    MODEL_VERSION=c_final_model
 
 WORKDIR /app
 

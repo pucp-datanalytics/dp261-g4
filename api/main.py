@@ -2,15 +2,34 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import time
+import uuid
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from api.predict import get_model_path, get_preprocessor_path, get_threshold, load_model, model_is_pipeline, predict_purchase
-from api.schemas import HealthResponse, PredictionResponse, VersionResponse, VisitorFeatures
+from api.predict import (
+    get_model_path,
+    get_model_sha,
+    get_model_version,
+    get_preprocessor_path,
+    get_threshold,
+    load_model,
+    model_is_pipeline,
+    predict_purchase,
+)
+from api.schemas import (
+    BatchPredictionItem,
+    BatchPredictionRequest,
+    BatchPredictionResponse,
+    HealthResponse,
+    PredictionResponse,
+    VersionResponse,
+    VisitorFeatures,
+)
 
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -30,9 +49,54 @@ def log_event(event: str, **fields: Any) -> None:
     payload = {
         "event": event,
         "timestamp": time.time(),
+        "api_version": API_VERSION,
         **fields,
     }
     LOGGER.info(json.dumps(payload, ensure_ascii=False, default=str))
+
+
+def verify_optional_api_key(x_api_key: str | None = Header(default=None)) -> None:
+    expected_key = os.getenv("API_KEY")
+    if not expected_key:
+        return
+    if x_api_key != expected_key:
+        log_event("auth_error", status_code=401, error="invalid_api_key")
+        raise HTTPException(status_code=401, detail="API key invalida o no enviada")
+
+
+@app.middleware("http")
+async def request_logging_middleware(request: Request, call_next):
+    request_id = str(uuid.uuid4())
+    start = time.perf_counter()
+    try:
+        response = await call_next(request)
+    except Exception as exc:
+        log_event(
+            "request_error",
+            request_id=request_id,
+            endpoint=request.url.path,
+            method=request.method,
+            status_code=500,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            client_ip=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
+            error=str(exc),
+        )
+        raise
+
+    latency_ms = round((time.perf_counter() - start) * 1000, 3)
+    response.headers["X-Request-ID"] = request_id
+    log_event(
+        "request",
+        request_id=request_id,
+        endpoint=request.url.path,
+        method=request.method,
+        status_code=response.status_code,
+        latency_ms=latency_ms,
+        client_ip=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
+    )
+    return response
 
 
 @app.on_event("startup")
@@ -43,6 +107,8 @@ def startup_event() -> None:
             "startup",
             status_code=200,
             model_path=get_model_path(),
+            model_version=get_model_version(),
+            model_sha=get_model_sha(),
             preprocessor_path=get_preprocessor_path(),
         )
     except Exception as exc:
@@ -82,6 +148,7 @@ def version() -> VersionResponse:
     try:
         model = load_model()
         threshold = get_threshold()
+        model_sha = get_model_sha()
     except Exception as exc:
         log_event(
             "version_error",
@@ -95,6 +162,8 @@ def version() -> VersionResponse:
     response = VersionResponse(
         project=PROJECT_NAME,
         api_version=API_VERSION,
+        model_version=get_model_version(),
+        model_sha=model_sha,
         model_path=get_model_path(),
         preprocessor_path=get_preprocessor_path(),
         model_is_pipeline=model_is_pipeline(model),
@@ -107,6 +176,8 @@ def version() -> VersionResponse:
         status_code=200,
         latency_ms=round((time.perf_counter() - start) * 1000, 3),
         model_path=response.model_path,
+        model_version=response.model_version,
+        model_sha=response.model_sha,
         model_is_pipeline=response.model_is_pipeline,
         threshold=response.threshold,
     )
@@ -114,7 +185,8 @@ def version() -> VersionResponse:
 
 
 @app.post("/predict", response_model=PredictionResponse)
-def predict(features: VisitorFeatures) -> PredictionResponse:
+def predict(features: VisitorFeatures, x_api_key: str | None = Header(default=None, alias="x-api-key")) -> PredictionResponse:
+    verify_optional_api_key(x_api_key)
     start = time.perf_counter()
     try:
         prediction = predict_purchase(features)
@@ -128,6 +200,8 @@ def predict(features: VisitorFeatures) -> PredictionResponse:
             proba=response.purchase_probability,
             prediction=response.prediction,
             threshold=response.threshold,
+            model_version=response.model_version,
+            model_sha=response.model_sha,
         )
         return response
     except ValueError as exc:
@@ -144,6 +218,47 @@ def predict(features: VisitorFeatures) -> PredictionResponse:
         log_event(
             "predict_error",
             endpoint="/predict",
+            method="POST",
+            status_code=500,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            error=str(exc),
+        )
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/predict_batch", response_model=BatchPredictionResponse)
+def predict_batch(batch: BatchPredictionRequest, x_api_key: str | None = Header(default=None, alias="x-api-key")) -> BatchPredictionResponse:
+    verify_optional_api_key(x_api_key)
+    start = time.perf_counter()
+    try:
+        records = []
+        for row_id, features in enumerate(batch.records):
+            prediction = predict_purchase(features)
+            records.append(BatchPredictionItem(row_id=row_id, **prediction))
+        response = BatchPredictionResponse(records=records, count=len(records))
+        log_event(
+            "predict_batch",
+            endpoint="/predict_batch",
+            method="POST",
+            status_code=200,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            record_count=response.count,
+        )
+        return response
+    except ValueError as exc:
+        log_event(
+            "predict_batch_validation_error",
+            endpoint="/predict_batch",
+            method="POST",
+            status_code=400,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            error=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        log_event(
+            "predict_batch_error",
+            endpoint="/predict_batch",
             method="POST",
             status_code=500,
             latency_ms=round((time.perf_counter() - start) * 1000, 3),
