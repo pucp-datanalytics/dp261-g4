@@ -69,6 +69,7 @@ streamlit run dashboard/c_app.py
 ```
 
 Si PB-20 despliega la API en AWS, reemplazar `API_URL` por el endpoint entregado.
+Si la API desplegada usa llave, configurar tambien `API_KEY`; el dashboard la enviara como header `x-api-key`.
 
 ## Despliegue MVP Sprint 6
 
@@ -83,6 +84,7 @@ Secretos requeridos en GitHub Actions:
 - `EC2_USER`
 - `EC2_SSH_KEY`
 - `API_URL` con el endpoint de la API de prediccion. Si no se define, el dashboard usa `http://localhost:8000`.
+- `API_KEY` opcional, solo si la API desplegada exige autenticacion.
 
 El dashboard muestra una vista ejecutiva para stakeholders de e-commerce:
 
@@ -117,6 +119,7 @@ Interpretacion rapida:
 - El threshold de negocio puede ser distinto de 0.5 porque depende de costos y beneficios.
 
 El simulador del dashboard esta integrado con `POST {API_URL}/predict` y maneja errores de API no disponible, timeouts y respuestas HTTP invalidas.
+La vista de carga de datasets puede probar una muestra contra `POST {API_URL}/predict_batch`, lo que permite validar el flujo Sprint 6 usuario -> dashboard -> API -> predicciones.
 
 ## Dashboard ejecutivo y valor de negocio
 
@@ -246,4 +249,14 @@ El criterio principal es F1-score. Accuracy, precision, recall y ROC-AUC se repo
 
 ## Sprint 6
 
-La API FastAPI vive en `api/`, el dashboard consume `POST {API_URL}/predict` desde el simulador y el despliegue del dashboard usa Docker + EC2 mediante GitHub Actions. El endpoint final de API debe configurarse como `API_URL` cuando PB-20 entregue o actualice el servicio desplegado.
+La API FastAPI vive en `api/`, el dashboard consume `POST {API_URL}/predict` desde el simulador y puede consumir `POST {API_URL}/predict_batch` para datasets cargados. El despliegue del dashboard usa Docker + EC2 mediante GitHub Actions y existe un workflow manual `Deploy Sprint 6 API` para construir/subir/desplegar la imagen de API cuando PB-20 tenga los secrets AWS/ECR configurados.
+
+Artefactos operativos agregados para Sprint 6:
+
+- `docs/sprint6_completion_checklist.md`
+- `docs/runbook.md`
+- `monitoring/cloudwatch-log-insights.md`
+- `monitoring/cloudwatch-alarms.json`
+- `.github/workflows/cd-api.yml`
+
+El endpoint final de API debe configurarse como `API_URL` cuando PB-20 entregue o actualice el servicio desplegado. Si la IP o las credenciales temporales de AWS cambian, se actualizan los GitHub Secrets, no el codigo.

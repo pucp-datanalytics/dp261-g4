@@ -1,0 +1,35 @@
+{
+  "alarms": [
+    {
+      "name": "sprint6-api-5xx-error-rate-high",
+      "description": "Alerta cuando la API supera el umbral de errores 5xx durante 5 minutos.",
+      "metric_source": "CloudWatch Logs metric filter sobre logs JSON de la API",
+      "filter_pattern": "{ $.status_code >= 500 }",
+      "threshold": 2,
+      "period_seconds": 300,
+      "evaluation_periods": 1,
+      "statistic": "Sum",
+      "recommended_action": "Revisar logs de predict_error/request_error y reiniciar o hacer rollback del contenedor."
+    },
+    {
+      "name": "sprint6-api-latency-p95-high",
+      "description": "Alerta cuando la latencia p95 supera el SLA operativo del MVP.",
+      "metric_source": "CloudWatch Logs Insights usando campo latency_ms",
+      "threshold_ms": 500,
+      "period_seconds": 300,
+      "evaluation_periods": 1,
+      "statistic": "p95",
+      "recommended_action": "Revisar CPU/memoria, tamano de payload y carga de modelo."
+    },
+    {
+      "name": "sprint6-api-throughput-drop",
+      "description": "Alerta opcional si no hay requests durante una ventana esperada de demo.",
+      "metric_source": "Conteo de event=request por minuto",
+      "threshold": 1,
+      "period_seconds": 300,
+      "evaluation_periods": 1,
+      "statistic": "Sum",
+      "recommended_action": "Validar health check, endpoint publico y configuracion API_URL del dashboard."
+    }
+  ]
+}

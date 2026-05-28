@@ -10,9 +10,11 @@ Variable para PB-21:
 
 ```text
 API_URL=http://localhost:8000
+API_KEY=<solo si PB-20 habilita autenticacion>
 ```
 
 En AWS, PB-20 debera reemplazar este valor por el endpoint publico/privado desplegado.
+Si PB-20 define `API_KEY`, el cliente debe enviarla en el header `x-api-key`.
 
 ## GET /health
 
@@ -62,6 +64,12 @@ Recibe las variables de una sesion online y devuelve probabilidad de compra y cl
 curl.exe -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
 ```
 
+Con API key:
+
+```powershell
+curl.exe -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" -H "x-api-key: <API_KEY>" --data-binary "@handoff/contracts/c_example_request.json"
+```
+
 Request esperado:
 
 ```json
@@ -106,7 +114,63 @@ El valor exacto de `purchase_probability` depende del modelo final y del thresho
 | Codigo | Caso |
 |---|---|
 | 400 | JSON invalido, columnas faltantes, tipos invalidos o variables extra no permitidas |
+| 401 | API key faltante o invalida cuando `API_KEY` esta configurada en el servidor |
 | 500 | Error cargando modelo, error inesperado de prediccion o configuracion invalida |
+
+## POST /predict_batch
+
+Permite que PB-21 valide datasets cargados desde el dashboard sin hacer una llamada manual por fila. El limite por request es 500 registros.
+
+```powershell
+curl.exe -X POST "http://localhost:8000/predict_batch" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_batch_request.json"
+```
+
+Request esperado:
+
+```json
+{
+  "records": [
+    {
+      "Administrative": 0,
+      "Administrative_Duration": 0.0,
+      "Informational": 0,
+      "Informational_Duration": 0.0,
+      "ProductRelated": 1,
+      "ProductRelated_Duration": 0.0,
+      "BounceRates": 0.2,
+      "ExitRates": 0.2,
+      "PageValues": 0.0,
+      "SpecialDay": 0.0,
+      "Month": "Feb",
+      "OperatingSystems": 1,
+      "Browser": 1,
+      "Region": 1,
+      "TrafficType": 1,
+      "VisitorType": "Returning_Visitor",
+      "Weekend": false
+    }
+  ]
+}
+```
+
+Response esperado:
+
+```json
+{
+  "records": [
+    {
+      "row_id": 0,
+      "purchase_probability": 0.12,
+      "prediction": 0,
+      "threshold": 0.5,
+      "model_path": "handoff/model/c_final_model.pkl",
+      "model_version": "c_final_model",
+      "model_sha": "abc123def456"
+    }
+  ],
+  "count": 1
+}
+```
 
 ## Logs estructurados para monitoring
 
@@ -153,6 +217,7 @@ PB-20 debe tomar:
 - artefactos de `handoff/model/`;
 - endpoint `/health` para health checks;
 - variables `MODEL_PATH`, `PREPROCESSOR_PATH` y `THRESHOLD`;
+- variable opcional `API_KEY` si el endpoint se expone publicamente;
 - este contrato para smoke tests en AWS.
 
 ## Entrega para PB-21
@@ -160,7 +225,9 @@ PB-20 debe tomar:
 PB-21 debe usar:
 
 - `API_URL` como variable de entorno;
+- `API_KEY` como variable de entorno solo si PB-20 protege la API;
 - `POST {API_URL}/predict`;
+- `POST {API_URL}/predict_batch` para datasets cargados desde el dashboard;
 - payload compatible con `handoff/contracts/c_example_request.json`;
 - respuesta compatible con `handoff/contracts/c_output_schema.json`;
 - manejo de timeouts, errores 400/500 y API no disponible.

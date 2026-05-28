@@ -71,8 +71,27 @@ def get_api_url() -> str:
     return os.getenv("API_URL", DEFAULT_API_URL).rstrip("/")
 
 
+def get_api_headers() -> dict:
+    headers = {"Content-Type": "application/json"}
+    api_key = os.getenv("API_KEY")
+    if api_key:
+        headers["x-api-key"] = api_key
+    return headers
+
+
 def predict_with_api(payload: dict) -> dict:
-    response = requests.post(f"{get_api_url()}/predict", json=payload, timeout=API_TIMEOUT_SECONDS)
+    response = requests.post(f"{get_api_url()}/predict", json=payload, headers=get_api_headers(), timeout=API_TIMEOUT_SECONDS)
+    response.raise_for_status()
+    return response.json()
+
+
+def predict_batch_with_api(records: list[dict]) -> dict:
+    response = requests.post(
+        f"{get_api_url()}/predict_batch",
+        json={"records": records},
+        headers=get_api_headers(),
+        timeout=API_TIMEOUT_SECONDS,
+    )
     response.raise_for_status()
     return response.json()
 
@@ -617,6 +636,30 @@ def render_uploaded_dataset_view(context: dict, assumptions: EconomicAssumptions
         file_name="c_uploaded_predictions.csv",
         mime="text/csv",
     )
+    with st.expander("Validacion Sprint 6: probar dataset contra API REST", expanded=False):
+        st.caption(
+            "Esta prueba envia una muestra del dataset cargado a `POST {API_URL}/predict_batch`. "
+            "Si la API desplegada requiere llave, define `API_KEY` como variable de entorno."
+        )
+        api_sample_size = st.slider("Filas a enviar a la API", 1, min(100, len(validation.model_input)), min(10, len(validation.model_input)))
+        if st.button("Probar muestra contra API"):
+            records = validation.model_input.head(api_sample_size).to_dict(orient="records")
+            try:
+                result = predict_batch_with_api(records)
+                api_predictions = pd.DataFrame(result.get("records", []))
+                st.success(f"API respondio correctamente para {result.get('count', len(api_predictions))} registros.")
+                st.dataframe(api_predictions.head(20), width="stretch", hide_index=True)
+                st.download_button(
+                    "Descargar respuesta API",
+                    data=api_predictions.to_csv(index=False).encode("utf-8"),
+                    file_name="c_api_batch_predictions_sample.csv",
+                    mime="text/csv",
+                )
+            except requests.HTTPError as exc:
+                detail = exc.response.text if exc.response is not None else str(exc)
+                st.error(f"La API rechazo la muestra: {detail}")
+            except requests.RequestException as exc:
+                st.warning(f"No se pudo conectar con la API configurada en `{get_api_url()}`. Detalle: {exc}")
     left, right = st.columns(2)
     left.plotly_chart(
         px.histogram(

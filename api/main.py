@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 import uuid
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
@@ -20,7 +21,15 @@ from api.predict import (
     model_is_pipeline,
     predict_purchase,
 )
-from api.schemas import HealthResponse, PredictionResponse, VersionResponse, VisitorFeatures
+from api.schemas import (
+    BatchPredictionItem,
+    BatchPredictionRequest,
+    BatchPredictionResponse,
+    HealthResponse,
+    PredictionResponse,
+    VersionResponse,
+    VisitorFeatures,
+)
 
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -44,6 +53,15 @@ def log_event(event: str, **fields: Any) -> None:
         **fields,
     }
     LOGGER.info(json.dumps(payload, ensure_ascii=False, default=str))
+
+
+def verify_optional_api_key(x_api_key: str | None = Header(default=None)) -> None:
+    expected_key = os.getenv("API_KEY")
+    if not expected_key:
+        return
+    if x_api_key != expected_key:
+        log_event("auth_error", status_code=401, error="invalid_api_key")
+        raise HTTPException(status_code=401, detail="API key invalida o no enviada")
 
 
 @app.middleware("http")
@@ -167,7 +185,8 @@ def version() -> VersionResponse:
 
 
 @app.post("/predict", response_model=PredictionResponse)
-def predict(features: VisitorFeatures) -> PredictionResponse:
+def predict(features: VisitorFeatures, x_api_key: str | None = Header(default=None, alias="x-api-key")) -> PredictionResponse:
+    verify_optional_api_key(x_api_key)
     start = time.perf_counter()
     try:
         prediction = predict_purchase(features)
@@ -199,6 +218,47 @@ def predict(features: VisitorFeatures) -> PredictionResponse:
         log_event(
             "predict_error",
             endpoint="/predict",
+            method="POST",
+            status_code=500,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            error=str(exc),
+        )
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/predict_batch", response_model=BatchPredictionResponse)
+def predict_batch(batch: BatchPredictionRequest, x_api_key: str | None = Header(default=None, alias="x-api-key")) -> BatchPredictionResponse:
+    verify_optional_api_key(x_api_key)
+    start = time.perf_counter()
+    try:
+        records = []
+        for row_id, features in enumerate(batch.records):
+            prediction = predict_purchase(features)
+            records.append(BatchPredictionItem(row_id=row_id, **prediction))
+        response = BatchPredictionResponse(records=records, count=len(records))
+        log_event(
+            "predict_batch",
+            endpoint="/predict_batch",
+            method="POST",
+            status_code=200,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            record_count=response.count,
+        )
+        return response
+    except ValueError as exc:
+        log_event(
+            "predict_batch_validation_error",
+            endpoint="/predict_batch",
+            method="POST",
+            status_code=400,
+            latency_ms=round((time.perf_counter() - start) * 1000, 3),
+            error=str(exc),
+        )
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        log_event(
+            "predict_batch_error",
+            endpoint="/predict_batch",
             method="POST",
             status_code=500,
             latency_ms=round((time.perf_counter() - start) * 1000, 3),

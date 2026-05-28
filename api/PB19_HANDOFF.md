@@ -6,11 +6,13 @@ Este archivo resume los insumos que PB-19 entrega a los demas roles del Sprint 6
 
 - API FastAPI disponible en `api/main.py`.
 - Endpoints requeridos por el PDF: `/health`, `/version`, `/predict`.
+- Endpoint adicional para PB-21: `/predict_batch`, pensado para datasets cargados desde el dashboard.
 - Schemas Pydantic en `api/schemas.py`.
 - Logica de carga y prediccion en `api/predict.py`.
 - Docker reproducible en `api/Dockerfile`.
 - Dependencias en `api/requirements.txt`.
 - Smoke test local en `api/smoke_test.py`.
+- Seguridad opcional con `API_KEY` via variable de entorno y header `x-api-key`.
 
 ## Artefactos usados
 
@@ -26,6 +28,7 @@ Este archivo resume los insumos que PB-19 entrega a los demas roles del Sprint 6
 
 - Usar `api/Dockerfile` para construir la imagen.
 - Configurar variables `MODEL_PATH`, `PREPROCESSOR_PATH`, `THRESHOLD` y `MODEL_VERSION`.
+- Configurar `API_KEY` si el endpoint queda expuesto publicamente.
 - Usar `/health` como health check.
 - Usar `/version` para diagnosticar version de API/modelo.
 - Capturar logs JSON de stdout en CloudWatch.
@@ -34,9 +37,11 @@ Este archivo resume los insumos que PB-19 entrega a los demas roles del Sprint 6
 
 - Usar `handoff/contracts/api_contract.md`.
 - Configurar `API_URL` con la URL que entregue Rol 3.
+- Configurar `API_KEY` si Rol 3 protege la API.
 - Enviar payload compatible con `handoff/contracts/c_example_request.json`.
+- Para datasets cargados, enviar payload compatible con `handoff/contracts/c_example_batch_request.json`.
 - Esperar respuesta compatible con `handoff/contracts/c_output_schema.json`.
-- Manejar errores 400, 500, timeouts y API no disponible.
+- Manejar errores 400, 401, 500, timeouts y API no disponible.
 
 ## Entrega a Rol 5 - SRE / Monitoring
 
@@ -72,6 +77,7 @@ python -m uvicorn api.main:app --host 0.0.0.0 --port 8000
 curl http://localhost:8000/health
 curl http://localhost:8000/version
 curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+curl -X POST "http://localhost:8000/predict_batch" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_batch_request.json"
 ```
 
 ## Validacion Docker minima
@@ -82,4 +88,5 @@ docker run --rm -p 8000:8000 sprint6-api
 curl http://localhost:8000/health
 curl http://localhost:8000/version
 curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+curl -X POST "http://localhost:8000/predict_batch" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_batch_request.json"
 ```
