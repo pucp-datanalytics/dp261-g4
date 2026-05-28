@@ -40,6 +40,10 @@ Este checklist resume lo que debe validarse para cerrar el Sprint 6 segun el PDF
 - Ejecutar workflow manual `Deploy Sprint 6 API`.
 - Verificar que la API responda en el puerto 8000 o detras de API Gateway/ALB.
 - Actualizar `API_URL` para que el dashboard desplegado consuma la API real.
+- En el workflow principal `.github/workflows/cd.yml`, confirmar que queden vivos dos contenedores:
+  - `sprint6-api` en puerto `8000`;
+  - `dp261-g4` en puerto `8080`.
+- Si dashboard y API corren en la misma EC2 dentro de Docker, usar `API_URL=http://sprint6-api:8000` dentro del contenedor del dashboard.
 
 ## Rol 4 - Integration Engineer
 
@@ -71,6 +75,14 @@ curl.exe $env:API_URL/health
 curl.exe $env:API_URL/version
 curl.exe -X POST "$env:API_URL/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
 curl.exe -X POST "$env:API_URL/predict_batch" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_batch_request.json"
+```
+
+En la EC2 tambien debe funcionar:
+
+```bash
+curl http://localhost:8000/health
+curl http://localhost:8000/version
+curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
 ```
 
 Si la API usa llave:

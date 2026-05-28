@@ -73,7 +73,7 @@ Si la API desplegada usa llave, configurar tambien `API_KEY`; el dashboard la en
 
 ## Despliegue MVP Sprint 6
 
-El repositorio incluye un `Dockerfile` para publicar el dashboard Streamlit en el puerto `8080` y un workflow en `.github/workflows/cd.yml` que construye la imagen, la sube a ECR y actualiza el contenedor en EC2 cuando se hace push a `feat/PB-review3`.
+El repositorio incluye un `Dockerfile` para publicar el dashboard Streamlit en el puerto `8080`, un `api/Dockerfile` para publicar la API FastAPI en el puerto `8000`, y un workflow en `.github/workflows/cd.yml` que construye ambas imagenes, las sube a ECR y actualiza ambos contenedores en EC2 cuando se hace push a `feat/PB-review3`.
 
 Secretos requeridos en GitHub Actions:
 
@@ -83,8 +83,22 @@ Secretos requeridos en GitHub Actions:
 - `EC2_HOST`
 - `EC2_USER`
 - `EC2_SSH_KEY`
-- `API_URL` con el endpoint de la API de prediccion. Si no se define, el dashboard usa `http://localhost:8000`.
+- `API_URL` con el endpoint de la API de prediccion. En EC2 con ambos contenedores, el workflow usa por defecto `http://sprint6-api:8000`.
 - `API_KEY` opcional, solo si la API desplegada exige autenticacion.
+
+Contenedores esperados en EC2:
+
+- `sprint6-api`: FastAPI, puerto `8000`.
+- `dp261-g4`: dashboard Streamlit, puerto `8080`.
+
+Validacion rapida en EC2:
+
+```bash
+sudo docker ps
+curl http://localhost:8000/health
+curl http://localhost:8000/version
+curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" --data-binary "@handoff/contracts/c_example_request.json"
+```
 
 El dashboard muestra una vista ejecutiva para stakeholders de e-commerce:
 
@@ -249,7 +263,7 @@ El criterio principal es F1-score. Accuracy, precision, recall y ROC-AUC se repo
 
 ## Sprint 6
 
-La API FastAPI vive en `api/`, el dashboard consume `POST {API_URL}/predict` desde el simulador y puede consumir `POST {API_URL}/predict_batch` para datasets cargados. El despliegue del dashboard usa Docker + EC2 mediante GitHub Actions y existe un workflow manual `Deploy Sprint 6 API` para construir/subir/desplegar la imagen de API cuando PB-20 tenga los secrets AWS/ECR configurados.
+La API FastAPI vive en `api/`, el dashboard consume `POST {API_URL}/predict` desde el simulador y puede consumir `POST {API_URL}/predict_batch` para datasets cargados. El despliegue principal usa Docker + EC2 mediante GitHub Actions y levanta ambos contenedores en la red Docker `sprint6-net`.
 
 Artefactos operativos agregados para Sprint 6:
 

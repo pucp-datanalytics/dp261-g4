@@ -36,6 +36,13 @@ curl.exe $env:API_URL/health
 curl.exe $env:API_URL/version
 ```
 
+En la EC2, si el workflow levanto ambos contenedores, tambien se puede probar la API desde el host:
+
+```bash
+curl http://localhost:8000/health
+curl http://localhost:8000/version
+```
+
 Respuesta esperada de `/health`:
 
 ```json
@@ -122,6 +129,7 @@ Alarmas recomendadas:
 
 ```bash
 sudo docker ps
+sudo docker logs --tail 100 dp261-g4
 sudo docker logs --tail 100 sprint6-api
 ```
 
@@ -129,6 +137,7 @@ sudo docker logs --tail 100 sprint6-api
 
 ```bash
 sudo docker restart sprint6-api
+sudo docker restart dp261-g4
 ```
 
 7. Si el despliegue nuevo falla, volver a la imagen anterior en ECR o relanzar el ultimo commit estable.

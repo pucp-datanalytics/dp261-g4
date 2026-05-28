@@ -24,18 +24,22 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build Docker image
-        run: docker build -t dp261-g4 .
-
-      - name: Tag Docker image
+      - name: Build Docker images
         run: |
-          docker tag dp261-g4:latest 009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:latest
+          docker build -t dp261-g4-dashboard .
+          docker build -t dp261-g4-api -f api/Dockerfile .
 
-      - name: Push Docker image
+      - name: Tag Docker images
+        run: |
+          docker tag dp261-g4-dashboard:latest 009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:latest
+          docker tag dp261-g4-api:latest 009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:api-latest
+
+      - name: Push Docker images
         run: |
           docker push 009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:latest
+          docker push 009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:api-latest
 
-      - name: Deploy on EC2
+      - name: Deploy dashboard and API on EC2
         uses: appleboy/ssh-action@v1.0.3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -43,23 +47,51 @@ jobs:
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
           AWS_REGION: us-east-1
           API_URL: ${{ secrets.API_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,AWS_REGION,API_URL
+          envs: AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY,AWS_SESSION_TOKEN,AWS_REGION,API_URL,API_KEY
           script: |
             aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 009030765814.dkr.ecr.us-east-1.amazonaws.com
 
             sudo docker pull 009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:latest
+            sudo docker pull 009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:api-latest
 
             sudo docker stop dp261-g4 || true
             sudo docker rm dp261-g4 || true
+            sudo docker stop sprint6-api || true
+            sudo docker rm sprint6-api || true
+
+            sudo docker network create sprint6-net || true
+
+            sudo docker run -d \
+              --name sprint6-api \
+              --network sprint6-net \
+              -p 8000:8000 \
+              -e MODEL_PATH="handoff/model/c_final_model.pkl" \
+              -e PREPROCESSOR_PATH="handoff/model/c_preprocessing_pipeline.pkl" \
+              -e THRESHOLD="0.5" \
+              -e MODEL_VERSION="c_final_model" \
+              -e API_KEY="${API_KEY:-}" \
+              009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:api-latest
+
+            DASHBOARD_API_URL="${API_URL:-http://sprint6-api:8000}"
+            if echo "$DASHBOARD_API_URL" | grep -Eq "localhost|127\.0\.0\.1"; then
+              DASHBOARD_API_URL="http://sprint6-api:8000"
+            fi
 
             sudo docker run -d \
               --name dp261-g4 \
+              --network sprint6-net \
               -p 8080:8080 \
-              -e API_URL="${API_URL:-http://localhost:8000}" \
+              -e API_URL="$DASHBOARD_API_URL" \
+              -e API_KEY="${API_KEY:-}" \
               009030765814.dkr.ecr.us-east-1.amazonaws.com/dp261-g4:latest
+
+            sleep 10
+            sudo docker ps
+            sudo docker exec dp261-g4 python -c "import os, requests; print(requests.get(os.environ['API_URL'] + '/health', timeout=10).json())"
 
             sudo docker image prune -f
